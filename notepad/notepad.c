@@ -35,7 +35,7 @@ BOOL     fStatus = FALSE;            /* status bar shown?                       
 BOOL     fLastStatus = FALSE;        /* status bar status when wordwrap was turned off */
 INT      dyStatus;                   /* height of status bar                           */
 
-INT		iTabStops = 32;				/* width of tabs in the edit control, multiplied by 4 */
+INT        iTabStops = 32;                /* width of tabs in the edit control, multiplied by 4 */
 
 HMENU    hSysMenuSetup;              /* Save Away for disabled Minimize   */
 
@@ -54,7 +54,7 @@ BOOL     fInSaveAsDlg = FALSE;
 
 BOOL     fMLE_is_broken= FALSE; 
 
-BOOL	 fWindowsOnlyEOL = FALSE;
+BOOL     fWindowsOnlyEOL = FALSE;
 
 /* variables for the new File/Open, File/Saveas,Find Text and Print dialogs */
 OPENFILENAME OFN;                     /* passed to the File Open/save APIs */
@@ -135,8 +135,8 @@ TCHAR *szOfflineFile    = (TCHAR*) IDS_OFFLINE_FILE;
 TCHAR *szReadOnlyFile   = (TCHAR*) IDS_READONLY_FILE;    
 TCHAR *szSystemFile     = (TCHAR*) IDS_SYSTEM_FILE;      
 TCHAR *szFile           = (TCHAR*) IDS_FILE;
-TCHAR *szWindowsFile	= (TCHAR*) IDS_LT_WINDOWS;
-TCHAR *szUnixFile		= (TCHAR*) IDS_LT_UNIX;
+TCHAR *szWindowsFile    = (TCHAR*) IDS_LT_WINDOWS;
+TCHAR *szUnixFile        = (TCHAR*) IDS_LT_UNIX;
 
 
 TCHAR **rgsz[CSTRINGS] = {
@@ -185,14 +185,14 @@ TCHAR **rgsz[CSTRINGS] = {
         &szSystemFile,
         &szFile,
         &szLetters,
-		&szWindowsFile,
-		&szUnixFile,
+        &szWindowsFile,
+        &szUnixFile,
 };
 
 
 HANDLE   fp;          /* file pointer */
 
-WNDPROC	DefEditWindowProc;
+WNDPROC    DefEditWindowProc;
 
 
 #if 0
@@ -285,11 +285,11 @@ void NPSize (int cxNew, int cyNew)
      * the new margins are accounted for.
      */
 
-	// NotepadEx: This InvalidateRect call causes flickering on window resize.
-	// It also doesn't seem to be necessary at all for the stated reasons in
-	// the original comment, above.
-	// Furthermore, this call seems to have been removed on Windows 7.
-	// After testing on XP and 2000 it doesn't seem to be needed there either.
+    // NotepadEx: This InvalidateRect call causes flickering on window resize.
+    // It also doesn't seem to be necessary at all for the stated reasons in
+    // the original comment, above.
+    // Furthermore, this call seems to have been removed on Windows 7.
+    // After testing on XP and 2000 it doesn't seem to be needed there either.
     //InvalidateRect(hwndEdit, (LPRECT)NULL, TRUE);
 
     // the height of the edit window depends on whether the status bar is
@@ -558,53 +558,53 @@ UINT_PTR APIENTRY NpOpenDialogHookProc(
 // Get the 0-based index of the character at the start of a given line.
 // The line number is 0-based. Returns -1 if no given line is present.
 ULONG GetEditControlRealCharacterIndexFromLineNumber(
-	IN	HWND	Window,
-	IN	ULONG	LineNumber)
+    IN    HWND    Window,
+    IN    ULONG    LineNumber)
 {
-	HLOCAL EditControlBufferHandle;
-	PWSTR EditControlBuffer;
-	ULONG Index;
-	UINT LineNumberTemp;
+    HLOCAL EditControlBufferHandle;
+    PWSTR EditControlBuffer;
+    ULONG Index;
+    UINT LineNumberTemp;
 
-	if (LineNumber == 0) {
-		return 0;
-	}
+    if (LineNumber == 0) {
+        return 0;
+    }
 
-	Index = 0;
-	LineNumberTemp = 0;
+    Index = 0;
+    LineNumberTemp = 0;
 
-	EditControlBufferHandle = Edit_GetHandle(Window);
+    EditControlBufferHandle = Edit_GetHandle(Window);
 
-	if (!EditControlBufferHandle) {
-		return -1;
-	}
+    if (!EditControlBufferHandle) {
+        return -1;
+    }
 
-	EditControlBuffer = (PWSTR) LocalLock(EditControlBufferHandle);
+    EditControlBuffer = (PWSTR) LocalLock(EditControlBufferHandle);
 
-	if (!EditControlBuffer) {
-		return -1;
-	}
+    if (!EditControlBuffer) {
+        return -1;
+    }
 
-	while (TRUE) {
-		if (EditControlBuffer[Index] == '\0') {
-			Index = -2; // we're gonna add 1 to it
-			break;
-		}
+    while (TRUE) {
+        if (EditControlBuffer[Index] == '\0') {
+            Index = -2; // we're gonna add 1 to it
+            break;
+        }
 
-		if (EditControlBuffer[Index] == '\n') {
-			++LineNumberTemp;
+        if (EditControlBuffer[Index] == '\n') {
+            ++LineNumberTemp;
 
-			if (LineNumberTemp == LineNumber) {
-				break;
-			}
-		}
+            if (LineNumberTemp == LineNumber) {
+                break;
+            }
+        }
 
-		++Index;
-	}
+        ++Index;
+    }
 
-	LocalUnlock(EditControlBufferHandle);
+    LocalUnlock(EditControlBufferHandle);
 
-	return Index + 1;
+    return Index + 1;
 }
 
 // GotoAndScrollInView
@@ -619,33 +619,33 @@ BOOLEAN GotoAndScrollInView( INT OneBasedLineNumber )
 {
     UINT CharIndex;
 
-	if (OneBasedLineNumber == 0) {
-		OneBasedLineNumber = 1;
-	}
+    if (OneBasedLineNumber == 0) {
+        OneBasedLineNumber = 1;
+    }
 
-	if (fWrap) {
-		// NotepadEx: Different algorithm is required when we go to a
-		// specific line when word wrap is enabled. The edit control
-		// thinks in terms of on-screen lines, whereas we want to use
-		// real line numbers (as in, # of newline characters).
+    if (fWrap) {
+        // NotepadEx: Different algorithm is required when we go to a
+        // specific line when word wrap is enabled. The edit control
+        // thinks in terms of on-screen lines, whereas we want to use
+        // real line numbers (as in, # of newline characters).
 
-		CharIndex = GetEditControlRealCharacterIndexFromLineNumber(
-			hwndEdit,
-			OneBasedLineNumber - 1);
-	} else {
-		CharIndex = (UINT) SendMessage(	hwndEdit,
-										EM_LINEINDEX,
-										OneBasedLineNumber-1,
-										0 );
-	}
+        CharIndex = GetEditControlRealCharacterIndexFromLineNumber(
+            hwndEdit,
+            OneBasedLineNumber - 1);
+    } else {
+        CharIndex = (UINT) SendMessage(    hwndEdit,
+                                        EM_LINEINDEX,
+                                        OneBasedLineNumber-1,
+                                        0 );
+    }
 
-	if (CharIndex == -1) {
-		return FALSE;
-	}
+    if (CharIndex == -1) {
+        return FALSE;
+    }
     
     SendMessage( hwndEdit, EM_SETSEL, CharIndex, CharIndex);
     SendMessage( hwndEdit, EM_SCROLLCARET, 0, 0 );
-	return TRUE;
+    return TRUE;
 }
 
 // NotepadEx: added for Vista+ file open/save dialog
@@ -653,47 +653,47 @@ BOOLEAN GotoAndScrollInView( INT OneBasedLineNumber )
 DEFINE_GUID(IID_IFileDialogEvents, 
 0x9beb83a7, 0xf24, 0x4afe, 0xb0, 0x4e, 0xd2, 0x2a, 0xd, 0xaf, 0x41, 0xfd);
 HRESULT STDMETHODCALLTYPE fdeQueryInterface(IFileDialogEvents *pfde, REFIID riid, void **ppv) {
-	if (!IsEqualIID(riid, &IID_IFileDialogEvents)) {
-		*ppv = NULL;
-		return E_NOINTERFACE;
-	}
+    if (!IsEqualIID(riid, &IID_IFileDialogEvents)) {
+        *ppv = NULL;
+        return E_NOINTERFACE;
+    }
 
-	*ppv = pfde;
-	pfde->lpVtbl->AddRef(pfde);
-	return S_OK;
+    *ppv = pfde;
+    pfde->lpVtbl->AddRef(pfde);
+    return S_OK;
 }
 
 ULONG STDMETHODCALLTYPE fdeAddRef(IFileDialogEvents *pfde) {
-	return 1;
+    return 1;
 }
 
 ULONG STDMETHODCALLTYPE fdeRelease(IFileDialogEvents *pfde) {
-	GlobalFree(pfde);
-	return 0;
+    GlobalFree(pfde);
+    return 0;
 }
 
 HRESULT STDMETHODCALLTYPE OnFileOk(IFileDialogEvents *pfde, IFileDialog *pfd) {
-	return E_NOTIMPL;
+    return E_NOTIMPL;
 }
 
 HRESULT STDMETHODCALLTYPE OnFolderChange(IFileDialogEvents *pfde, IFileDialog *pfd) {
-	return E_NOTIMPL;
+    return E_NOTIMPL;
 }
 
 HRESULT STDMETHODCALLTYPE OnFolderChanging(IFileDialogEvents *pfde, IFileDialog *pfd, IShellItem *psi) {
-	return E_NOTIMPL;
+    return E_NOTIMPL;
 }
 
 HRESULT STDMETHODCALLTYPE OnOverwrite(IFileDialogEvents *pfde, IFileDialog *pfd, IShellItem *psi, FDE_OVERWRITE_RESPONSE *pfor) {
-	return E_NOTIMPL;
+    return E_NOTIMPL;
 }
 
 HRESULT STDMETHODCALLTYPE OnShareViolation(IFileDialogEvents *pfde, IFileDialog *pfd, IShellItem *psi, FDE_SHAREVIOLATION_RESPONSE *pfsr) {
-	return E_NOTIMPL;
+    return E_NOTIMPL;
 }
 
 HRESULT STDMETHODCALLTYPE OnTypeChange(IFileDialogEvents *pfde, IFileDialog *pfd) {
-	return E_NOTIMPL;
+    return E_NOTIMPL;
 }
 
 #define pfdCall(func, ...) if (!SUCCEEDED(pfd->lpVtbl->func(pfd, __VA_ARGS__))) return E_FAIL;
@@ -708,70 +708,70 @@ const DWORD dwIDEncodingComboBox = 1;
 
 // Dialog hook for the NEW STYLE open dialog, run whenever the user selects a new item
 HRESULT STDMETHODCALLTYPE OnSelectionChange(IFileDialogEvents *pfde, IFileDialog *pfd) {
-	TCHAR szFileName[MAX_PATH];
-	LPWSTR szTempName;
-	static TCHAR szPrevFileName[MAX_PATH] = TEXT(""); 
-	HANDLE hFile;
-	DWORD dwBytesRead;
-	IShellItem *psi;
+    TCHAR szFileName[MAX_PATH];
+    LPWSTR szTempName;
+    static TCHAR szPrevFileName[MAX_PATH] = TEXT(""); 
+    HANDLE hFile;
+    DWORD dwBytesRead;
+    IShellItem *psi;
 
-	// get the filename.
-	pfdCall(GetCurrentSelection, &psi);
-	psiCall(GetDisplayName, SIGDN_FILESYSPATH, &szTempName);
-	_tcsncpy(szFileName, szTempName, sizeof(szFileName)/sizeof(TCHAR));
-	CoTaskMemFree(szTempName); szTempName = NULL;
+    // get the filename.
+    pfdCall(GetCurrentSelection, &psi);
+    psiCall(GetDisplayName, SIGDN_FILESYSPATH, &szTempName);
+    _tcsncpy(szFileName, szTempName, sizeof(szFileName)/sizeof(TCHAR));
+    CoTaskMemFree(szTempName); szTempName = NULL;
 
-	if (_tcslen(szFileName) > 0)
-	{
-		// if same file as the previous file, don't do anything.
-		if (lstrcmpi(szFileName, szPrevFileName) == 0)
-			return S_OK;
+    if (_tcslen(szFileName) > 0)
+    {
+        // if same file as the previous file, don't do anything.
+        if (lstrcmpi(szFileName, szPrevFileName) == 0)
+            return S_OK;
 
-		if (!fInSaveAsDlg) { // File open dialog
-			// open the file.
-			hFile = CreateFile(szFileName,GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
-			if (hFile != INVALID_HANDLE_VALUE) {
-				BYTE szFileBuffer[BUFFER_TEST_SIZE];
+        if (!fInSaveAsDlg) { // File open dialog
+            // open the file.
+            hFile = CreateFile(szFileName,GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL);
+            if (hFile != INVALID_HANDLE_VALUE) {
+                BYTE szFileBuffer[BUFFER_TEST_SIZE];
 
-				if ( (ReadFile(hFile, szFileBuffer, BUFFER_TEST_SIZE, &dwBytesRead, NULL) <= 0) || dwBytesRead == 0) {
-					// if the file read fails, just quit.
-					CloseHandle(hFile);
-					return E_FAIL;
-				}
+                if ( (ReadFile(hFile, szFileBuffer, BUFFER_TEST_SIZE, &dwBytesRead, NULL) <= 0) || dwBytesRead == 0) {
+                    // if the file read fails, just quit.
+                    CloseHandle(hFile);
+                    return E_FAIL;
+                }
 
-				// determine the file type based on dwBytesRead bytes of the file.
-				g_ftOpenedAs = fDetermineFileType(szFileBuffer, dwBytesRead);
+                // determine the file type based on dwBytesRead bytes of the file.
+                g_ftOpenedAs = fDetermineFileType(szFileBuffer, dwBytesRead);
 
-				switch (g_ftOpenedAs) {
-				case FT_ANSI:
-				case FT_UNICODE:
-				case FT_UNICODEBE:
-				case FT_UTF8: pfdcCall(SetSelectedControlItem, dwIDEncodingComboBox, g_ftOpenedAs); break;
-				default: break;
-				}
+                switch (g_ftOpenedAs) {
+                case FT_ANSI:
+                case FT_UNICODE:
+                case FT_UNICODEBE:
+                case FT_UTF8: pfdcCall(SetSelectedControlItem, dwIDEncodingComboBox, g_ftOpenedAs); break;
+                default: break;
+                }
 
-				// cleanup.
-				lstrcpy(szPrevFileName, szFileName);
-				CloseHandle(hFile);
-			}
-		}
-	}
+                // cleanup.
+                lstrcpy(szPrevFileName, szFileName);
+                CloseHandle(hFile);
+            }
+        }
+    }
 
-	psi->lpVtbl->Release(psi);
-	return S_OK;
+    psi->lpVtbl->Release(psi);
+    return S_OK;
 }
 
 static IFileDialogEventsVtbl IFileDialogEvents_Vtbl = {
-	fdeQueryInterface,
-	fdeAddRef,
-	fdeRelease,
-	OnFileOk,
-	OnFolderChanging,
-	OnFolderChange,
-	OnSelectionChange,
-	OnShareViolation,
-	OnTypeChange,
-	OnOverwrite
+    fdeQueryInterface,
+    fdeAddRef,
+    fdeRelease,
+    OnFileOk,
+    OnFolderChanging,
+    OnFolderChange,
+    OnSelectionChange,
+    OnShareViolation,
+    OnTypeChange,
+    OnOverwrite
 };
 
 #undef pfdCall
@@ -786,96 +786,96 @@ static IFileDialogEventsVtbl IFileDialogEvents_Vtbl = {
 // show a new-style or old-style file open/save dialog
 // return true on success, false on failure (incl. user canceled)
 BOOL NPOpenSave(
-	_Out_ LPTSTR szNewName,
-	_In_ SIZE_T BufferSize)
+    _Out_ LPTSTR szNewName,
+    _In_ SIZE_T BufferSize)
 {
-	IFileDialog *pfd = NULL;
+    IFileDialog *pfd = NULL;
 
-	if (SUCCEEDED(CoCreateInstance(fInSaveAsDlg ? &CLSID_FileSaveDialog : &CLSID_FileOpenDialog,
-								   NULL, CLSCTX_INPROC_SERVER, &IID_IFileDialog, &pfd))) {
-		// use new style dialog (vista or win7)
-		IShellItem *psiResult = NULL;
-		IFileDialogEvents *pfde = NULL;
-		DWORD dwCookie;
-		DWORD dwSelectedEncoding;
-		FILEOPENDIALOGOPTIONS dwFlags = 0;
-		LPWSTR szName = NULL;
-		COMDLG_FILTERSPEC filterFileExt[] = {
-//			{L"Text", L"*.ahk;*.asc;*.asm;*.bas;*.bat;*.c;*.c++;*.cpp;*.cc;*.cfg;*.cmd;*.cs;*.css;*.csv;*.def;*.dlg;*.f03;*.f08;*.f18;*.f4;*.f77;*.f90;*.f95;*.for;*.go;*.h;*.h++;*.hh;*.hpp;*.hta;*.htm;*.html;*.hxx;*.idl;*.ini;*.jl;*.java;*.js;*.json;*.lisp;*.lua;*.m4;*.md;*.nfo;*.nim;*.pas;*.pem;*.php;*.php3;*.php4;*.ps;*.rb;*.rc;*.reg;*.rgs;*.rs;*.rst;*.s;*.scala;*.scm;*.sh;*.shar;*.shtm;*.shtml;*.sl;*.svg;*.txt;*vb;*.vbox;*.vbs;*.y;*.yml;*.yaml"},
-			{L"Text Documents", L"*.txt"},
-			{L"All Files", L"*.*"}
-		};
+    if (SUCCEEDED(CoCreateInstance(fInSaveAsDlg ? &CLSID_FileSaveDialog : &CLSID_FileOpenDialog,
+                                   NULL, CLSCTX_INPROC_SERVER, &IID_IFileDialog, &pfd))) {
+        // use new style dialog (vista or win7)
+        IShellItem *psiResult = NULL;
+        IFileDialogEvents *pfde = NULL;
+        DWORD dwCookie;
+        DWORD dwSelectedEncoding;
+        FILEOPENDIALOGOPTIONS dwFlags = 0;
+        LPWSTR szName = NULL;
+        COMDLG_FILTERSPEC filterFileExt[] = {
+//            {L"Text", L"*.ahk;*.asc;*.asm;*.bas;*.bat;*.c;*.c++;*.cpp;*.cc;*.cfg;*.cmd;*.cs;*.css;*.csv;*.def;*.dlg;*.f03;*.f08;*.f18;*.f4;*.f77;*.f90;*.f95;*.for;*.go;*.h;*.h++;*.hh;*.hpp;*.hta;*.htm;*.html;*.hxx;*.idl;*.ini;*.jl;*.java;*.js;*.json;*.lisp;*.lua;*.m4;*.md;*.nfo;*.nim;*.pas;*.pem;*.php;*.php3;*.php4;*.ps;*.rb;*.rc;*.reg;*.rgs;*.rs;*.rst;*.s;*.scala;*.scm;*.sh;*.shar;*.shtm;*.shtml;*.sl;*.svg;*.txt;*vb;*.vbox;*.vbs;*.y;*.yml;*.yaml"},
+            {L"Text Documents", L"*.txt"},
+            {L"All Files", L"*.*"}
+        };
 
-		// event handler is only necessary for the open dialog
-		if (!fInSaveAsDlg) {
-			// set up the event handler (see OnSelectionChange)
-			if (!(pfde = GlobalAlloc(GMEM_FIXED, sizeof(*pfde)))) return FALSE;
-			pfde->lpVtbl = &IFileDialogEvents_Vtbl;
-			pfdCall(Advise, pfde, &dwCookie);
-		}
+        // event handler is only necessary for the open dialog
+        if (!fInSaveAsDlg) {
+            // set up the event handler (see OnSelectionChange)
+            if (!(pfde = GlobalAlloc(GMEM_FIXED, sizeof(*pfde)))) return FALSE;
+            pfde->lpVtbl = &IFileDialogEvents_Vtbl;
+            pfdCall(Advise, pfde, &dwCookie);
+        }
 
-		// setup the encoding selector combo box
-		pfdCall(QueryInterface, &IID_IFileDialogCustomize, &pfdc);
-		pfdcCall(StartVisualGroup, dwIDEncodingLabel, TEXT("&Encoding:"));
-		pfdcCall(AddComboBox, dwIDEncodingComboBox);
-		pfdcCall(AddControlItem, dwIDEncodingComboBox, FT_ANSI, szFtAnsi);
-		pfdcCall(AddControlItem, dwIDEncodingComboBox, FT_UNICODE, szFtUnicode); // aka UTF-16 LE
-		pfdcCall(AddControlItem, dwIDEncodingComboBox, FT_UNICODEBE, szFtUnicodeBe); // aka UTF-16 BE
-		pfdcCall(AddControlItem, dwIDEncodingComboBox, FT_UTF8, szFtUtf8);
-		
-		switch (g_ftOpenedAs) {
-		case FT_UNICODE:  //fallthrough
-		case FT_UNICODEBE://fallthrough
-		case FT_UTF8:		pfdcCall(SetSelectedControlItem, dwIDEncodingComboBox, g_ftOpenedAs); break;
-		default:			pfdcCall(SetSelectedControlItem, dwIDEncodingComboBox, 0); break;
-		}
-		
-		pfdcCall(MakeProminent, dwIDEncodingLabel);
-		pfdcCallNA(EndVisualGroup);
+        // setup the encoding selector combo box
+        pfdCall(QueryInterface, &IID_IFileDialogCustomize, &pfdc);
+        pfdcCall(StartVisualGroup, dwIDEncodingLabel, TEXT("&Encoding:"));
+        pfdcCall(AddComboBox, dwIDEncodingComboBox);
+        pfdcCall(AddControlItem, dwIDEncodingComboBox, FT_ANSI, szFtAnsi);
+        pfdcCall(AddControlItem, dwIDEncodingComboBox, FT_UNICODE, szFtUnicode); // aka UTF-16 LE
+        pfdcCall(AddControlItem, dwIDEncodingComboBox, FT_UNICODEBE, szFtUnicodeBe); // aka UTF-16 BE
+        pfdcCall(AddControlItem, dwIDEncodingComboBox, FT_UTF8, szFtUtf8);
+        
+        switch (g_ftOpenedAs) {
+        case FT_UNICODE:  //fallthrough
+        case FT_UNICODEBE://fallthrough
+        case FT_UTF8:        pfdcCall(SetSelectedControlItem, dwIDEncodingComboBox, g_ftOpenedAs); break;
+        default:            pfdcCall(SetSelectedControlItem, dwIDEncodingComboBox, 0); break;
+        }
+        
+        pfdcCall(MakeProminent, dwIDEncodingLabel);
+        pfdcCallNA(EndVisualGroup);
 
-		pfdCall(GetOptions, &dwFlags);
-		pfdCall(SetOptions, dwFlags | FOS_FORCEFILESYSTEM | FOS_FILEMUSTEXIST);
+        pfdCall(GetOptions, &dwFlags);
+        pfdCall(SetOptions, dwFlags | FOS_FORCEFILESYSTEM | FOS_FILEMUSTEXIST);
 
-		if (fInSaveAsDlg) {
-			// Win7 notepad automatically populates the field with the last used filename
-			// (not including the full file path) or "*.txt" if no filename exists
-			const TCHAR *BareFileName = PathFindFileName(szFileName);
+        if (fInSaveAsDlg) {
+            // Win7 notepad automatically populates the field with the last used filename
+            // (not including the full file path) or "*.txt" if no filename exists
+            const TCHAR *BareFileName = PathFindFileName(szFileName);
 
-			if (_tcslen(BareFileName) == 0)
-				BareFileName = TEXT("*.txt");
+            if (_tcslen(BareFileName) == 0)
+                BareFileName = TEXT("*.txt");
 
-			pfdCall(SetFileName, BareFileName);
-		}
+            pfdCall(SetFileName, BareFileName);
+        }
 
-		pfdCall(SetFileTypes, ARRAYSIZE(filterFileExt), filterFileExt);
-		pfdCall(SetFileTypeIndex, 1); // 1-based - so this will set the first entry in filterFileExt table
-		pfdCall(SetDefaultExtension, L"txt");
-		pfdCall(Show, hwndNP);
-		pfdCall(GetResult, &psiResult);
-		pfdcCall(GetSelectedControlItem, dwIDEncodingComboBox, &dwSelectedEncoding);
-		
-		if (fInSaveAsDlg) {
-			g_ftSaveAs = (NP_FILETYPE) dwSelectedEncoding;
-		} else {
-			g_ftOpenedAs = (NP_FILETYPE) dwSelectedEncoding;
-		}
+        pfdCall(SetFileTypes, ARRAYSIZE(filterFileExt), filterFileExt);
+        pfdCall(SetFileTypeIndex, 1); // 1-based - so this will set the first entry in filterFileExt table
+        pfdCall(SetDefaultExtension, L"txt");
+        pfdCall(Show, hwndNP);
+        pfdCall(GetResult, &psiResult);
+        pfdcCall(GetSelectedControlItem, dwIDEncodingComboBox, &dwSelectedEncoding);
+        
+        if (fInSaveAsDlg) {
+            g_ftSaveAs = (NP_FILETYPE) dwSelectedEncoding;
+        } else {
+            g_ftOpenedAs = (NP_FILETYPE) dwSelectedEncoding;
+        }
 
-		if (SUCCEEDED(psiResult->lpVtbl->GetDisplayName(psiResult, SIGDN_FILESYSPATH, &szName))) {
-			_tcsncpy(szNewName, szName, (MAX_PATH-1)/sizeof(TCHAR));
-			CoTaskMemFree(szName);
-			psiResult->lpVtbl->Release(psiResult);
-			pfdc->lpVtbl->Release(pfdc);
-			if (!fInSaveAsDlg) pfdCall(Unadvise, dwCookie);
-			pfdCallNA(Release);
-			return TRUE;
-		}
+        if (SUCCEEDED(psiResult->lpVtbl->GetDisplayName(psiResult, SIGDN_FILESYSPATH, &szName))) {
+            _tcsncpy(szNewName, szName, (MAX_PATH-1)/sizeof(TCHAR));
+            CoTaskMemFree(szName);
+            psiResult->lpVtbl->Release(psiResult);
+            pfdc->lpVtbl->Release(pfdc);
+            if (!fInSaveAsDlg) pfdCall(Unadvise, dwCookie);
+            pfdCallNA(Release);
+            return TRUE;
+        }
 
-		return FALSE;
-	} else {
-		// use old style dialog (windows xp style)
+        return FALSE;
+    } else {
+        // use old style dialog (windows xp style)
 
-		if (fInSaveAsDlg) {
-			OFN.lpstrFile       = szNewName;
+        if (fInSaveAsDlg) {
+            OFN.lpstrFile       = szNewName;
             OFN.lpstrTitle      = szSaveCaption;
             /* Added OFN_PATHMUSTEXIST to eliminate problems in SaveFile.
              * 12 February 1991    clarkc
@@ -895,38 +895,38 @@ BOOL NPOpenSave(
              */
             OFN.lpstrFilter       = szSaveFilterSpec;
             OFN.lpstrDefExt       = TEXT("txt");
-			OFN.nFilterIndex= FILE_TEXT;
-			return GetSaveFileName(&OFN);
-		} else {
-			/* set up the variable fields of the OPENFILENAME struct.
-			 * (the constant fields have been set in NPInit()
-			 */
-	        OFN.lpstrFile         = szNewName;
-	        lstrcpy(szNewName, TEXT("*.txt") ); /* set default selection */
-	        OFN.lpstrTitle        = szOpenCaption;
+            OFN.nFilterIndex= FILE_TEXT;
+            return GetSaveFileName(&OFN);
+        } else {
+            /* set up the variable fields of the OPENFILENAME struct.
+             * (the constant fields have been set in NPInit()
+             */
+            OFN.lpstrFile         = szNewName;
+            lstrcpy(szNewName, TEXT("*.txt") ); /* set default selection */
+            OFN.lpstrTitle        = szOpenCaption;
 
-	        /* ALL non-zero long pointers must be defined immediately
-	         * before the call, as the DS might move otherwise.
-	         * 12 February 1991    clarkc
-	         */
-	        OFN.lpstrFilter       = szOpenFilterSpec;
-	        OFN.lpstrDefExt       = TEXT("txt");
-	        /* Added OFN_FILEMUSTEXIST to eliminate problems in LoadFile.
-	         * 12 February 1991    clarkc
-	         */
-	        OFN.Flags          = OFN_HIDEREADONLY | OFN_FILEMUSTEXIST |
-	                             OFN_EXPLORER         |
-	                             OFN_ENABLESIZING     |
-	                             OFN_ENABLETEMPLATE   | OFN_ENABLEHOOK;
+            /* ALL non-zero long pointers must be defined immediately
+             * before the call, as the DS might move otherwise.
+             * 12 February 1991    clarkc
+             */
+            OFN.lpstrFilter       = szOpenFilterSpec;
+            OFN.lpstrDefExt       = TEXT("txt");
+            /* Added OFN_FILEMUSTEXIST to eliminate problems in LoadFile.
+             * 12 February 1991    clarkc
+             */
+            OFN.Flags          = OFN_HIDEREADONLY | OFN_FILEMUSTEXIST |
+                                 OFN_EXPLORER         |
+                                 OFN_ENABLESIZING     |
+                                 OFN_ENABLETEMPLATE   | OFN_ENABLEHOOK;
 
-	        OFN.nFilterIndex   = FILE_TEXT;
+            OFN.nFilterIndex   = FILE_TEXT;
               
-	        // show encoding listbox
-	        OFN.lpTemplateName= TEXT("NpEncodingDialog");
-	        OFN.lpfnHook= NpOpenDialogHookProc;
-			return GetOpenFileName(&OFN);
-		}
-	}
+            // show encoding listbox
+            OFN.lpTemplateName= TEXT("NpEncodingDialog");
+            OFN.lpfnHook= NpOpenDialogHookProc;
+            return GetOpenFileName(&OFN);
+        }
+    }
 }
 
 // NotepadEx addition.
@@ -938,90 +938,90 @@ BOOL NPOpenSave(
 // nothing will be copied and 0 is returned.
 // The length returned is in characters, not bytes.
 ULONG CopyEditControlSelectionText(
-	HWND	Window,
-	PWCHAR	Buffer,
-	ULONG	BufferCch)
+    HWND    Window,
+    PWCHAR    Buffer,
+    ULONG    BufferCch)
 {
-	ULONG SelectionStart;
-	ULONG SelectionEnd;
-	ULONG SelectionLength;
-	HLOCAL EditControlBufferHandle;
-	PWCHAR EditControlBuffer;
+    ULONG SelectionStart;
+    ULONG SelectionEnd;
+    ULONG SelectionLength;
+    HLOCAL EditControlBufferHandle;
+    PWCHAR EditControlBuffer;
 
-	if (BufferCch == 0) {
-		// 0 is an invalid parameter.
-		return 0;
-	}
+    if (BufferCch == 0) {
+        // 0 is an invalid parameter.
+        return 0;
+    }
 
-	// Initialize buffer with empty string
-	Buffer[0] = '\0';
+    // Initialize buffer with empty string
+    Buffer[0] = '\0';
 
-	// Retrieve the length of the selected text.
-	SendMessage(Window, EM_GETSEL, (WPARAM) &SelectionStart, (LPARAM) &SelectionEnd);
-	SelectionLength = SelectionEnd - SelectionStart;
+    // Retrieve the length of the selected text.
+    SendMessage(Window, EM_GETSEL, (WPARAM) &SelectionStart, (LPARAM) &SelectionEnd);
+    SelectionLength = SelectionEnd - SelectionStart;
 
-	if (SelectionLength == 0) {
-		// There is no selection.
-		return 0;
-	} else if (SelectionLength > (BufferCch - 1)) {
-		// The selection length is longer than what would fit into the buffer.
-		return 0;
-	}
+    if (SelectionLength == 0) {
+        // There is no selection.
+        return 0;
+    } else if (SelectionLength > (BufferCch - 1)) {
+        // The selection length is longer than what would fit into the buffer.
+        return 0;
+    }
 
-	// Lock the edit control's buffer so we can get a direct pointer to
-	// the text inside.
-	
-	EditControlBufferHandle = Edit_GetHandle(Window);
+    // Lock the edit control's buffer so we can get a direct pointer to
+    // the text inside.
+    
+    EditControlBufferHandle = Edit_GetHandle(Window);
 
-	if (!EditControlBufferHandle) {
-		return 0;
-	}
+    if (!EditControlBufferHandle) {
+        return 0;
+    }
 
-	EditControlBuffer = (PWCHAR) LocalLock(EditControlBufferHandle);
+    EditControlBuffer = (PWCHAR) LocalLock(EditControlBufferHandle);
 
-	if (!EditControlBuffer) {
-		return 0;
-	}
+    if (!EditControlBuffer) {
+        return 0;
+    }
 
-	RtlCopyMemory(Buffer, &EditControlBuffer[SelectionStart], SelectionLength * sizeof(WCHAR));
-	Buffer[SelectionLength] = '\0';
-	LocalUnlock(EditControlBufferHandle);
+    RtlCopyMemory(Buffer, &EditControlBuffer[SelectionStart], SelectionLength * sizeof(WCHAR));
+    Buffer[SelectionLength] = '\0';
+    LocalUnlock(EditControlBufferHandle);
 
-	return SelectionLength;
+    return SelectionLength;
 }
 
 UINT_PTR CALLBACK FindReplaceHookProc(
-	IN	HWND	Dialog,
-	IN	UINT	Message,
-	IN	WPARAM	WParam,
-	IN	LPARAM	LParam)
+    IN    HWND    Dialog,
+    IN    UINT    Message,
+    IN    WPARAM    WParam,
+    IN    LPARAM    LParam)
 {
-	STATIC LPFINDREPLACE FindReplaceInfo;
+    STATIC LPFINDREPLACE FindReplaceInfo;
 
-	switch (Message) {
-	case WM_INITDIALOG:
-		FindReplaceInfo = (LPFINDREPLACE) LParam;
-		CheckDlgButton(Dialog, chx1, fWholeWord);
-		CheckDlgButton(Dialog, chx2, fCase);
-		CheckDlgButton(Dialog, chx3, fWrapAround);
-		return TRUE;
-	case WM_COMMAND:
-		switch (WParam) {
-		case chx1: // Whole word only
-			fWholeWord = IsDlgButtonChecked(Dialog, (int) WParam);
-			return FALSE;
-		case chx2: // Match case
-			fCase = IsDlgButtonChecked(Dialog, (int) WParam);
-			return FALSE;
-		case chx3: // Wrap around
-			fWrapAround = IsDlgButtonChecked(Dialog, (int) WParam);
-			return TRUE;
-		}
+    switch (Message) {
+    case WM_INITDIALOG:
+        FindReplaceInfo = (LPFINDREPLACE) LParam;
+        CheckDlgButton(Dialog, chx1, fWholeWord);
+        CheckDlgButton(Dialog, chx2, fCase);
+        CheckDlgButton(Dialog, chx3, fWrapAround);
+        return TRUE;
+    case WM_COMMAND:
+        switch (WParam) {
+        case chx1: // Whole word only
+            fWholeWord = IsDlgButtonChecked(Dialog, (int) WParam);
+            return FALSE;
+        case chx2: // Match case
+            fCase = IsDlgButtonChecked(Dialog, (int) WParam);
+            return FALSE;
+        case chx3: // Wrap around
+            fWrapAround = IsDlgButtonChecked(Dialog, (int) WParam);
+            return TRUE;
+        }
 
-		break;
-	}
+        break;
+    }
 
-	return FALSE;
+    return FALSE;
 }
 
 /* ** Notepad command proc - called whenever notepad gets WM_COMMAND
@@ -1037,10 +1037,10 @@ INT NPCommand(
     LONG     style;
     DWORD    rc;
     RECT     rcClient;
-	IHxHelpPane *php = NULL;
-	BSTR helpURI = NULL;
-	CLSID CLSID_HxHelpPane;
-	IID IID_IHxHelpPane;
+    IHxHelpPane *php = NULL;
+    BSTR helpURI = NULL;
+    CLSID CLSID_HxHelpPane;
+    IID IID_IHxHelpPane;
 
     switch (LOWORD(wParam))
     {
@@ -1052,10 +1052,10 @@ INT NPCommand(
             New(TRUE);
             break;
 
-		case M_NEWWIN:
+        case M_NEWWIN:
 
-			NewWindow();
-			break;
+            NewWindow();
+            break;
 
         case M_OPEN:
             if (CheckSave(FALSE))
@@ -1097,7 +1097,7 @@ INT NPCommand(
                break;
 
             /* fall through if there is no save name, or if the file
-			 * save fails (e.g. no write permission) */
+             * save fails (e.g. no write permission) */
 
         case M_SAVEAS:
             if (!fUntitled)
@@ -1145,70 +1145,70 @@ INT NPCommand(
             }
 
         case M_REPLACE:
-			CopyEditControlSelectionText(hwndEdit, szSearch, ARRAYSIZE(szSearch));
+            CopyEditControlSelectionText(hwndEdit, szSearch, ARRAYSIZE(szSearch));
 
             if (hDlgFind)
             {
-				SetDlgItemText(hDlgFind, edt1, szSearch);
-				SetFocus(hDlgFind);
+                SetDlgItemText(hDlgFind, edt1, szSearch);
+                SetFocus(hDlgFind);
             }
             else
             {
-				FR.Flags			= FR_REPLACE | FR_ENABLETEMPLATE | FR_ENABLEHOOK;
-				FR.lpTemplateName	= MAKEINTRESOURCE(IDD_REPLACEDIALOG);
-				FR.lpfnHook			= FindReplaceHookProc;
-				FR.lpstrReplaceWith	= szReplace;
-				FR.wReplaceWithLen	= CCHKEYMAX;
-				FR.lpstrFindWhat	= szSearch;
-				FR.wFindWhatLen		= CCHKEYMAX;
-				hDlgFind = ReplaceText( &FR );
+                FR.Flags            = FR_REPLACE | FR_ENABLETEMPLATE | FR_ENABLEHOOK;
+                FR.lpTemplateName    = MAKEINTRESOURCE(IDD_REPLACEDIALOG);
+                FR.lpfnHook            = FindReplaceHookProc;
+                FR.lpstrReplaceWith    = szReplace;
+                FR.wReplaceWithLen    = CCHKEYMAX;
+                FR.lpstrFindWhat    = szSearch;
+                FR.wFindWhatLen        = CCHKEYMAX;
+                hDlgFind = ReplaceText( &FR );
             }
             break;
 
         case M_FINDNEXT:
             if (szSearch[0])
             {
-				fReverse = FALSE;
-				Search(szSearch);
-				break;
+                fReverse = FALSE;
+                Search(szSearch);
+                break;
             }
             /* else fall through and bring up "find" dialog */
 
-		case M_FINDPREVIOUS:
-			// notepadEx addition
-			if (szSearch[0])
-			{
-				fReverse = TRUE;
-				Search(szSearch);
-				break;
-			}
+        case M_FINDPREVIOUS:
+            // notepadEx addition
+            if (szSearch[0])
+            {
+                fReverse = TRUE;
+                Search(szSearch);
+                break;
+            }
 
         case M_FIND:
-			CopyEditControlSelectionText(hwndEdit, szSearch, ARRAYSIZE(szSearch));
+            CopyEditControlSelectionText(hwndEdit, szSearch, ARRAYSIZE(szSearch));
 
             if (hDlgFind)
             {
-				SetDlgItemText(hDlgFind, edt1, szSearch);
-				SetFocus(hDlgFind);
+                SetDlgItemText(hDlgFind, edt1, szSearch);
+                SetFocus(hDlgFind);
             }
             else
             {
-				FR.Flags			= FR_DOWN | FR_ENABLETEMPLATE | FR_ENABLEHOOK;
-				FR.lpTemplateName	= MAKEINTRESOURCE(IDD_FINDDIALOG);
-				FR.lpfnHook			= FindReplaceHookProc;
-				FR.lpstrReplaceWith	= NULL;
-				FR.wReplaceWithLen	= 0;
-				FR.lpstrFindWhat	= szSearch;
-				FR.wFindWhatLen		= CCHKEYMAX;
-				hDlgFind = FindText((LPFINDREPLACE)&FR);
+                FR.Flags            = FR_DOWN | FR_ENABLETEMPLATE | FR_ENABLEHOOK;
+                FR.lpTemplateName    = MAKEINTRESOURCE(IDD_FINDDIALOG);
+                FR.lpfnHook            = FindReplaceHookProc;
+                FR.lpstrReplaceWith    = NULL;
+                FR.wReplaceWithLen    = 0;
+                FR.lpstrFindWhat    = szSearch;
+                FR.wFindWhatLen        = CCHKEYMAX;
+                hDlgFind = FindText((LPFINDREPLACE)&FR);
             }
             break;
 
         case M_GOTO:
-            DialogBox(	(HINSTANCE) hInstanceNP,
-						MAKEINTRESOURCE(IDD_GOTODIALOG),
-						hwndNP,
-						GotoDlgProc);
+            DialogBox(    (HINSTANCE) hInstanceNP,
+                        MAKEINTRESOURCE(IDD_GOTODIALOG),
+                        hwndNP,
+                        GotoDlgProc);
             break;
 
         case M_ABOUT:
@@ -1221,23 +1221,23 @@ INT NPCommand(
             break;
 
         case M_HELP:
-			CLSIDFromString(L"{8cec58e7-07a1-11d9-b15e-000d56bfe6ee}", &CLSID_HxHelpPane);
-			IIDFromString(L"{8cec5884-07a1-11d9-b15e-000d56bfe6ee}", &IID_IHxHelpPane);
+            CLSIDFromString(L"{8cec58e7-07a1-11d9-b15e-000d56bfe6ee}", &CLSID_HxHelpPane);
+            IIDFromString(L"{8cec5884-07a1-11d9-b15e-000d56bfe6ee}", &IID_IHxHelpPane);
 
-			// NotepadEx
-			if (SUCCEEDED(CoCreateInstance(&CLSID_HxHelpPane, NULL, CLSCTX_INPROC_SERVER, &IID_IHxHelpPane, &php))) {
-				// Vista/7+ windows help
-				if (!(helpURI = SysAllocString(L"mshelp://Windows/?id=5d18d5fb-e737-4a73-b6cc-dccc63720231"))) break;
-				php->lpVtbl->DisplayTask(php, helpURI);
-				php->lpVtbl->Release(php); php = NULL;
-				SysFreeString(helpURI); helpURI = NULL;
-			} else {
-				// NT5 style - on XP and 2k, the required CHM file is located at %WINDIR%\Help\notepad.chm
-				//HtmlHelpA(GetDesktopWindow(), "notepad.chm", HH_DISPLAY_TOPIC, 0L);
-				TCHAR szNpHelpPath[MAX_PATH];
-				ExpandEnvironmentStrings(TEXT("%WINDIR%\\Help\\notepad.chm"), szNpHelpPath, ARRAYSIZE(szNpHelpPath));
-				ShellExecute(GetDesktopWindow(), NULL, szNpHelpPath, NULL, NULL, TRUE);
-			}
+            // NotepadEx
+            if (SUCCEEDED(CoCreateInstance(&CLSID_HxHelpPane, NULL, CLSCTX_INPROC_SERVER, &IID_IHxHelpPane, &php))) {
+                // Vista/7+ windows help
+                if (!(helpURI = SysAllocString(L"mshelp://Windows/?id=5d18d5fb-e737-4a73-b6cc-dccc63720231"))) break;
+                php->lpVtbl->DisplayTask(php, helpURI);
+                php->lpVtbl->Release(php); php = NULL;
+                SysFreeString(helpURI); helpURI = NULL;
+            } else {
+                // NT5 style - on XP and 2k, the required CHM file is located at %WINDIR%\Help\notepad.chm
+                //HtmlHelpA(GetDesktopWindow(), "notepad.chm", HH_DISPLAY_TOPIC, 0L);
+                TCHAR szNpHelpPath[MAX_PATH];
+                ExpandEnvironmentStrings(TEXT("%WINDIR%\\Help\\notepad.chm"), szNpHelpPath, ARRAYSIZE(szNpHelpPath));
+                ShellExecute(GetDesktopWindow(), NULL, szNpHelpPath, NULL, NULL, TRUE);
+            }
             break;
 
         case M_CUT:
@@ -1312,16 +1312,16 @@ INT NPCommand(
             break;
 
         case ID_EDIT:
-			// 18-08-2022 notepadEx - add a handler here which updates the titlebar status
-			if (g_bDirty == FALSE && HIWORD(wParam) == EN_CHANGE && SendMessage(hwndEdit, EM_GETMODIFY, 0, 0)) {
-				TCHAR lpNewTitle[MAX_PATH + 11];
+            // 18-08-2022 notepadEx - add a handler here which updates the titlebar status
+            if (g_bDirty == FALSE && HIWORD(wParam) == EN_CHANGE && SendMessage(hwndEdit, EM_GETMODIFY, 0, 0)) {
+                TCHAR lpNewTitle[MAX_PATH + 11];
 
-				if (GetWindowText(hwndNP, lpNewTitle + 1, ARRAYSIZE(lpNewTitle))) {
-					lpNewTitle[0] = '*';
-					SetWindowText(hwndNP, lpNewTitle);
-					g_bDirty = TRUE;
-				}
-			}
+                if (GetWindowText(hwndNP, lpNewTitle + 1, ARRAYSIZE(lpNewTitle))) {
+                    lpNewTitle[0] = '*';
+                    SetWindowText(hwndNP, lpNewTitle);
+                    g_bDirty = TRUE;
+                }
+            }
             break;
 
         case M_PRINT:
@@ -1417,27 +1417,27 @@ INT NPCommand(
             }
             break;
         }
-		
-		case M_TW2:
-		{
-			iTabStops = 8;
-			SendMessage(hwndEdit, EM_SETTABSTOPS, 1, (LPARAM) &iTabStops);
-			break;
-		}
+        
+        case M_TW2:
+        {
+            iTabStops = 8;
+            SendMessage(hwndEdit, EM_SETTABSTOPS, 1, (LPARAM) &iTabStops);
+            break;
+        }
 
-		case M_TW4:
-		{
-			iTabStops = 16;
-			SendMessage(hwndEdit, EM_SETTABSTOPS, 1, (LPARAM) &iTabStops);
-			break;
-		}
-		
-		case M_TW8:
-		{
-			iTabStops = 32;
-			SendMessage(hwndEdit, EM_SETTABSTOPS, 1, (LPARAM) &iTabStops);
-			break;
-		}
+        case M_TW4:
+        {
+            iTabStops = 16;
+            SendMessage(hwndEdit, EM_SETTABSTOPS, 1, (LPARAM) &iTabStops);
+            break;
+        }
+        
+        case M_TW8:
+        {
+            iTabStops = 32;
+            SendMessage(hwndEdit, EM_SETTABSTOPS, 1, (LPARAM) &iTabStops);
+            break;
+        }
 
         default:
             return FALSE;
@@ -1505,16 +1505,16 @@ BOOL FAR CheckSave (BOOL fSysModal)
     INT    mdResult = IDOK;
     TCHAR  szNewName[MAX_PATH] = TEXT("");      /* New file name */
     TCHAR *pszFileName;
-	INT iAllocSize;                   // size needed for message
+    INT iAllocSize;                   // size needed for message
     TCHAR*  pszMessage;               // combined message
-	TDI __TaskDialogIndirect;
-	TASKDIALOGCONFIG tdc;
-	
-	TASKDIALOG_BUTTON tdButtons[] = {
-		{IDYES, TEXT("Save")},
-		{IDNO, TEXT("Don't Save")},
-	};
-	ZeroMemory(&tdc, sizeof(tdc));
+    TDI __TaskDialogIndirect;
+    TASKDIALOGCONFIG tdc;
+    
+    TASKDIALOG_BUTTON tdButtons[] = {
+        {IDYES, TEXT("Save")},
+        {IDNO, TEXT("Don't Save")},
+    };
+    ZeroMemory(&tdc, sizeof(tdc));
 
 /* If it's untitled and there's no text, don't worry about it */
     if (fUntitled && !SendMessage (hwndEdit, WM_GETTEXTLENGTH, 0, (LPARAM)0))
@@ -1528,33 +1528,33 @@ BOOL FAR CheckSave (BOOL fSysModal)
            pszFileName= szFileName;
 
        // put up message box - XP style or Vista style depending on whether it is available
-	   if ((__TaskDialogIndirect = (TDI) GetProcAddress(GetModuleHandleA("COMCTL32.DLL"), "TaskDialogIndirect")) == NULL) {
-		   // use XP style MessageBox
-		   fInSaveAsDlg= TRUE;     // inform wm_queryendsession that we are trying to save
-		   mdResult= AlertBox(hwndNP, szNN, szSCBC, pszFileName,
+       if ((__TaskDialogIndirect = (TDI) GetProcAddress(GetModuleHandleA("COMCTL32.DLL"), "TaskDialogIndirect")) == NULL) {
+           // use XP style MessageBox
+           fInSaveAsDlg= TRUE;     // inform wm_queryendsession that we are trying to save
+           mdResult= AlertBox(hwndNP, szNN, szSCBC, pszFileName,
                               (WORD)((fSysModal ? MB_SYSTEMMODAL :
                               MB_APPLMODAL)|MB_YESNOCANCEL|MB_ICONEXCLAMATION));
-	   } else {
-		   // use Task Dialog like in Vista and up
-		   iAllocSize= (lstrlen(szSCBC) + (pszFileName ? lstrlen(pszFileName) : 0) + 1 ) * sizeof(TCHAR);
-		   pszMessage= (TCHAR*) LocalAlloc( LPTR, iAllocSize );
+       } else {
+           // use Task Dialog like in Vista and up
+           iAllocSize= (lstrlen(szSCBC) + (pszFileName ? lstrlen(pszFileName) : 0) + 1 ) * sizeof(TCHAR);
+           pszMessage= (TCHAR*) LocalAlloc( LPTR, iAllocSize );
 
-	       if( pszMessage ) {
-		       MergeStrings( szSCBC, pszFileName, pszMessage );
+           if( pszMessage ) {
+               MergeStrings( szSCBC, pszFileName, pszMessage );
            } else {
-		       pszMessage = szSCBC;
+               pszMessage = szSCBC;
            }
-	       tdc.cbSize = sizeof(tdc);
-	       tdc.hwndParent = hwndNP;
-	       tdc.hInstance = (HINSTANCE) hInstanceNP;
-	       tdc.pszWindowTitle = szNN;
-	       tdc.pszMainInstruction = pszMessage;
-	       tdc.dwCommonButtons = TDCBF_CANCEL_BUTTON;
-	       tdc.cButtons = 2;
-	       tdc.pButtons = tdButtons;
-	       __TaskDialogIndirect(&tdc, &mdResult, NULL, NULL);
-	       if (pszMessage != szSCBC) LocalFree( (HLOCAL) pszMessage );
-	   }
+           tdc.cbSize = sizeof(tdc);
+           tdc.hwndParent = hwndNP;
+           tdc.hInstance = (HINSTANCE) hInstanceNP;
+           tdc.pszWindowTitle = szNN;
+           tdc.pszMainInstruction = pszMessage;
+           tdc.dwCommonButtons = TDCBF_CANCEL_BUTTON;
+           tdc.cButtons = 2;
+           tdc.pButtons = tdButtons;
+           __TaskDialogIndirect(&tdc, &mdResult, NULL, NULL);
+           if (pszMessage != szSCBC) LocalFree( (HLOCAL) pszMessage );
+       }
 
        fInSaveAsDlg= FALSE;
 
@@ -1636,216 +1636,216 @@ SaveFilePrompt:
 // ripped from some shell code somewhere from the edit control
 // forgot exactly where
 BOOL IsBreakChar(
-	WCHAR	wch)
+    WCHAR    wch)
 {
-	CONST WCHAR szBreakChars[] = {
-		0x0009, // TAB
-		0x000A, // NEWLINE
-		0x000D, // CARRIAGE RETURN
-		0x0020, // SPACE
-		0x0021, // IE: !
-		0x0022, // IE: "
-		0x0023, // IE: #
-		0x0024, // IE: $
-		0x0025, // IE: %
-		0x0026, // IE: &
-		0x0027, // IE: '
-		0x0028, // LEFT PARENTHESIS
-		0x0029, // RIGHT PARENTHESIS
-		0x002A, // IE: *
-		0x002B, // IE: +
-		0x002C, // IE: ,
-		0x002D, // HYPHEN
-		0x002E, // IE: .
-		0x002F, // IE: /
-		0x003A, // IE: :
-		0x003B, // IE: ;
-		0x003C, // IE: <
-		0x003D, // IE: =
-		0x003E, // IE: >
-		0x003F, // IE: ?
-		0x0040, // IE: @
-		0x005B, // LEFT SQUARE BRACKET
-		0x005C, // IE: '\'
-		0x005D, // RIGHT SQUARE BRACKET
-		0x005E, // IE: ^
-		0x005F, // IE: _
-		0x0060, // IE:`
-		0x007B, // LEFT CURLY BRACKET
-		0x007C, // IE: |
-		0x007D, // RIGHT CURLY BRACKET
-		0x007E, // IE: ~
-		0x00AB, // LEFT-POINTING DOUBLE ANGLE QUOTATION MARK
-		0x00AD, // OPTIONAL HYPHEN
-		0x00BB, // RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK
-		0x02C7, // CARON
-		0x02C9, // MODIFIER LETTER MACRON
-		0x055D, // ARMENIAN COMMA
-		0x060C, // ARABIC COMMA
-		0x2002, // EN SPACE
-		0x2003, // EM SPACE
-		0x2004, // THREE-PER-EM SPACE
-		0x2005, // FOUR-PER-EM SPACE
-		0x2006, // SIX-PER-EM SPACE
-		0x2007, // FIGURE SPACE
-		0x2008, // PUNCTUATION SPACE
-		0x2009, // THIN SPACE
-		0x200A, // HAIR SPACE
-		0x200B, // ZERO WIDTH SPACE
-		0x2013, // EN DASH
-		0x2014, // EM DASH
-		0x2016, // DOUBLE VERTICAL LINE
-		0x2018, // LEFT SINGLE QUOTATION MARK
-		0x201C, // LEFT DOUBLE QUOTATION MARK
-		0x201D, // RIGHT DOUBLE QUOTATION MARK
-		0x2022, // BULLET
-		0x2025, // TWO DOT LEADER
-		0x2026, // HORIZONTAL ELLIPSIS
-		0x2027, // HYPHENATION POINT
-		0x2039, // SINGLE LEFT-POINTING ANGLE QUOTATION MARK
-		0x203A, // SINGLE RIGHT-POINTING ANGLE QUOTATION MARK
-		0x2045, // LEFT SQUARE BRACKET WITH QUILL
-		0x2046, // RIGHT SQUARE BRACKET WITH QUILL
-		0x207D, // SUPERSCRIPT LEFT PARENTHESIS
-		0x207E, // SUPERSCRIPT RIGHT PARENTHESIS
-		0x208D, // SUBSCRIPT LEFT PARENTHESIS
-		0x208E, // SUBSCRIPT RIGHT PARENTHESIS
-		0x226A, // MUCH LESS THAN
-		0x226B, // MUCH GREATER THAN
-		0x2574, // BOX DRAWINGS LIGHT LEFT
-		0x3001, // IDEOGRAPHIC COMMA
-		0x3002, // IDEOGRAPHIC FULL STOP
-		0x3003, // DITTO MARK
-		0x3005, // IDEOGRAPHIC ITERATION MARK
-		0x3008, // LEFT ANGLE BRACKET
-		0x3009, // RIGHT ANGLE BRACKET
-		0x300A, // LEFT DOUBLE ANGLE BRACKET
-		0x300B, // RIGHT DOUBLE ANGLE BRACKET
-		0x300C, // LEFT CORNER BRACKET
-		0x300D, // RIGHT CORNER BRACKET
-		0x300E, // LEFT WHITE CORNER BRACKET
-		0x300F, // RIGHT WHITE CORNER BRACKET
-		0x3010, // LEFT BLACK LENTICULAR BRACKET
-		0x3011, // RIGHT BLACK LENTICULAR BRACKET
-		0x3014, // LEFT TORTOISE SHELL BRACKET
-		0x3015, // RIGHT TORTOISE SHELL BRACKET
-		0x3016, // LEFT WHITE LENTICULAR BRACKET
-		0x3017, // RIGHT WHITE LENTICULAR BRACKET
-		0x3018, // LEFT WHITE TORTOISE SHELL BRACKET
-		0x3019, // RIGHT WHITE TORTOISE SHELL BRACKET
-		0x301A, // LEFT WHITE SQUARE BRACKET
-		0x301B, // RIGHT WHITE SQUARE BRACKET
-		0x301D, // REVERSED DOUBLE PRIME QUOTATION MARK
-		0x301E, // DOUBLE PRIME QUOTATION MARK
-		0x3041, // HIRAGANA LETTER SMALL A
-		0x3043, // HIRAGANA LETTER SMALL I
-		0x3045, // HIRAGANA LETTER SMALL U
-		0x3047, // HIRAGANA LETTER SMALL E
-		0x3049, // HIRAGANA LETTER SMALL O
-		0x3063, // HIRAGANA LETTER SMALL TU
-		0x3083, // HIRAGANA LETTER SMALL YA
-		0x3085, // HIRAGANA LETTER SMALL YU
-		0x3087, // HIRAGANA LETTER SMALL YO
-		0x308E, // HIRAGANA LETTER SMALL WA
-		0x309B, // KATAKANA-HIRAGANA VOICED SOUND MARK
-		0x309C, // KATAKANA-HIRAGANA SEMI-VOICED SOUND MARK
-		0x309D, // HIRAGANA ITERATION MARK
-		0x309E, // HIRAGANA VOICED ITERATION MARK
-		0x30A1, // KATAKANA LETTER SMALL A
-		0x30A3, // KATAKANA LETTER SMALL I
-		0x30A5, // KATAKANA LETTER SMALL U
-		0x30A7, // KATAKANA LETTER SMALL E
-		0x30A9, // KATAKANA LETTER SMALL O
-		0x30C3, // KATAKANA LETTER SMALL TU
-		0x30E3, // KATAKANA LETTER SMALL YA
-		0x30E5, // KATAKANA LETTER SMALL YU
-		0x30E7, // KATAKANA LETTER SMALL YO
-		0x30EE, // KATAKANA LETTER SMALL WA
-		0x30F5, // KATAKANA LETTER SMALL KA
-		0x30F6, // KATAKANA LETTER SMALL KE
-		0x30FC, // KATAKANA-HIRAGANA PROLONGED SOUND MARK
-		0x30FD, // KATAKANA ITERATION MARK
-		0x30FE, // KATAKANA VOICED ITERATION MARK
-		0xFD3E, // ORNATE LEFT PARENTHESIS
-		0xFD3F, // ORNATE RIGHT PARENTHESIS
-		0xFE30, // VERTICAL TWO DOT LEADER
-		0xFE31, // VERTICAL EM DASH
-		0xFE33, // VERTICAL LOW LINE
-		0xFE34, // VERTICAL WAVY LOW LINE
-		0xFE35, // PRESENTATION FORM FOR VERTICAL LEFT PARENTHESIS
-		0xFE36, // PRESENTATION FORM FOR VERTICAL RIGHT PARENTHESIS
-		0xFE37, // PRESENTATION FORM FOR VERTICAL LEFT CURLY BRACKET
-		0xFE38, // PRESENTATION FORM FOR VERTICAL RIGHT CURLY BRACKET
-		0xFE39, // PRESENTATION FORM FOR VERTICAL LEFT TORTOISE SHELL BRACKET
-		0xFE3A, // PRESENTATION FORM FOR VERTICAL RIGHT TORTOISE SHELL BRACKET
-		0xFE3B, // PRESENTATION FORM FOR VERTICAL LEFT BLACK LENTICULAR BRACKET
-		0xFE3C, // PRESENTATION FORM FOR VERTICAL RIGHT BLACK LENTICULAR BRACKET
-		0xFE3D, // PRESENTATION FORM FOR VERTICAL LEFT DOUBLE ANGLE BRACKET
-		0xFE3E, // PRESENTATION FORM FOR VERTICAL RIGHT DOUBLE ANGLE BRACKET
-		0xFE3F, // PRESENTATION FORM FOR VERTICAL LEFT ANGLE BRACKET
-		0xFE40, // PRESENTATION FORM FOR VERTICAL RIGHT ANGLE BRACKET
-		0xFE41, // PRESENTATION FORM FOR VERTICAL LEFT CORNER BRACKET
-		0xFE42, // PRESENTATION FORM FOR VERTICAL RIGHT CORNER BRACKET
-		0xFE43, // PRESENTATION FORM FOR VERTICAL LEFT WHITE CORNER BRACKET
-		0xFE44, // PRESENTATION FORM FOR VERTICAL RIGHT WHITE CORNER BRACKET
-		0xFE4F, // WAVY LOW LINE
-		0xFE50, // SMALL COMMA
-		0xFE51, // SMALL IDEOGRAPHIC COMMA
-		0xFE59, // SMALL LEFT PARENTHESIS
-		0xFE5A, // SMALL RIGHT PARENTHESIS
-		0xFE5B, // SMALL LEFT CURLY BRACKET
-		0xFE5C, // SMALL RIGHT CURLY BRACKET
-		0xFE5D, // SMALL LEFT TORTOISE SHELL BRACKET
-		0xFE5E, // SMALL RIGHT TORTOISE SHELL BRACKET
-		0xFF08, // FULLWIDTH LEFT PARENTHESIS
-		0xFF09, // FULLWIDTH RIGHT PARENTHESIS
-		0xFF0C, // FULLWIDTH COMMA
-		0xFF0E, // FULLWIDTH FULL STOP
-		0xFF1C, // FULLWIDTH LESS-THAN SIGN
-		0xFF1E, // FULLWIDTH GREATER-THAN SIGN
-		0xFF3B, // FULLWIDTH LEFT SQUARE BRACKET
-		0xFF3D, // FULLWIDTH RIGHT SQUARE BRACKET
-		0xFF40, // FULLWIDTH GRAVE ACCENT
-		0xFF5B, // FULLWIDTH LEFT CURLY BRACKET
-		0xFF5C, // FULLWIDTH VERTICAL LINE
-		0xFF5D, // FULLWIDTH RIGHT CURLY BRACKET
-		0xFF5E, // FULLWIDTH TILDE
-		0xFF61, // HALFWIDTH IDEOGRAPHIC FULL STOP
-		0xFF62, // HALFWIDTH LEFT CORNER BRACKET
-		0xFF63, // HALFWIDTH RIGHT CORNER BRACKET
-		0xFF64, // HALFWIDTH IDEOGRAPHIC COMMA
-		0xFF67, // HALFWIDTH KATAKANA LETTER SMALL A
-		0xFF68, // HALFWIDTH KATAKANA LETTER SMALL I
-		0xFF69, // HALFWIDTH KATAKANA LETTER SMALL U
-		0xFF6A, // HALFWIDTH KATAKANA LETTER SMALL E
-		0xFF6B, // HALFWIDTH KATAKANA LETTER SMALL O
-		0xFF6C, // HALFWIDTH KATAKANA LETTER SMALL YA
-		0xFF6D, // HALFWIDTH KATAKANA LETTER SMALL YU
-		0xFF6E, // HALFWIDTH KATAKANA LETTER SMALL YO
-		0xFF6F, // HALFWIDTH KATAKANA LETTER SMALL TU
-		0xFF70, // HALFWIDTH KATAKANA-HIRAGANA PROLONGED SOUND MARK
-		0xFF9E, // HALFWIDTH KATAKANA VOICED SOUND MARK
-		0xFF9F, // HALFWIDTH KATAKANA SEMI-VOICED SOUND MARK
-		0xFFE9, // HALFWIDTH LEFTWARDS ARROW
-		0xFFEB, // HALFWIDTH RIGHTWARDS ARROW
-	};
+    CONST WCHAR szBreakChars[] = {
+        0x0009, // TAB
+        0x000A, // NEWLINE
+        0x000D, // CARRIAGE RETURN
+        0x0020, // SPACE
+        0x0021, // IE: !
+        0x0022, // IE: "
+        0x0023, // IE: #
+        0x0024, // IE: $
+        0x0025, // IE: %
+        0x0026, // IE: &
+        0x0027, // IE: '
+        0x0028, // LEFT PARENTHESIS
+        0x0029, // RIGHT PARENTHESIS
+        0x002A, // IE: *
+        0x002B, // IE: +
+        0x002C, // IE: ,
+        0x002D, // HYPHEN
+        0x002E, // IE: .
+        0x002F, // IE: /
+        0x003A, // IE: :
+        0x003B, // IE: ;
+        0x003C, // IE: <
+        0x003D, // IE: =
+        0x003E, // IE: >
+        0x003F, // IE: ?
+        0x0040, // IE: @
+        0x005B, // LEFT SQUARE BRACKET
+        0x005C, // IE: '\'
+        0x005D, // RIGHT SQUARE BRACKET
+        0x005E, // IE: ^
+        0x005F, // IE: _
+        0x0060, // IE:`
+        0x007B, // LEFT CURLY BRACKET
+        0x007C, // IE: |
+        0x007D, // RIGHT CURLY BRACKET
+        0x007E, // IE: ~
+        0x00AB, // LEFT-POINTING DOUBLE ANGLE QUOTATION MARK
+        0x00AD, // OPTIONAL HYPHEN
+        0x00BB, // RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK
+        0x02C7, // CARON
+        0x02C9, // MODIFIER LETTER MACRON
+        0x055D, // ARMENIAN COMMA
+        0x060C, // ARABIC COMMA
+        0x2002, // EN SPACE
+        0x2003, // EM SPACE
+        0x2004, // THREE-PER-EM SPACE
+        0x2005, // FOUR-PER-EM SPACE
+        0x2006, // SIX-PER-EM SPACE
+        0x2007, // FIGURE SPACE
+        0x2008, // PUNCTUATION SPACE
+        0x2009, // THIN SPACE
+        0x200A, // HAIR SPACE
+        0x200B, // ZERO WIDTH SPACE
+        0x2013, // EN DASH
+        0x2014, // EM DASH
+        0x2016, // DOUBLE VERTICAL LINE
+        0x2018, // LEFT SINGLE QUOTATION MARK
+        0x201C, // LEFT DOUBLE QUOTATION MARK
+        0x201D, // RIGHT DOUBLE QUOTATION MARK
+        0x2022, // BULLET
+        0x2025, // TWO DOT LEADER
+        0x2026, // HORIZONTAL ELLIPSIS
+        0x2027, // HYPHENATION POINT
+        0x2039, // SINGLE LEFT-POINTING ANGLE QUOTATION MARK
+        0x203A, // SINGLE RIGHT-POINTING ANGLE QUOTATION MARK
+        0x2045, // LEFT SQUARE BRACKET WITH QUILL
+        0x2046, // RIGHT SQUARE BRACKET WITH QUILL
+        0x207D, // SUPERSCRIPT LEFT PARENTHESIS
+        0x207E, // SUPERSCRIPT RIGHT PARENTHESIS
+        0x208D, // SUBSCRIPT LEFT PARENTHESIS
+        0x208E, // SUBSCRIPT RIGHT PARENTHESIS
+        0x226A, // MUCH LESS THAN
+        0x226B, // MUCH GREATER THAN
+        0x2574, // BOX DRAWINGS LIGHT LEFT
+        0x3001, // IDEOGRAPHIC COMMA
+        0x3002, // IDEOGRAPHIC FULL STOP
+        0x3003, // DITTO MARK
+        0x3005, // IDEOGRAPHIC ITERATION MARK
+        0x3008, // LEFT ANGLE BRACKET
+        0x3009, // RIGHT ANGLE BRACKET
+        0x300A, // LEFT DOUBLE ANGLE BRACKET
+        0x300B, // RIGHT DOUBLE ANGLE BRACKET
+        0x300C, // LEFT CORNER BRACKET
+        0x300D, // RIGHT CORNER BRACKET
+        0x300E, // LEFT WHITE CORNER BRACKET
+        0x300F, // RIGHT WHITE CORNER BRACKET
+        0x3010, // LEFT BLACK LENTICULAR BRACKET
+        0x3011, // RIGHT BLACK LENTICULAR BRACKET
+        0x3014, // LEFT TORTOISE SHELL BRACKET
+        0x3015, // RIGHT TORTOISE SHELL BRACKET
+        0x3016, // LEFT WHITE LENTICULAR BRACKET
+        0x3017, // RIGHT WHITE LENTICULAR BRACKET
+        0x3018, // LEFT WHITE TORTOISE SHELL BRACKET
+        0x3019, // RIGHT WHITE TORTOISE SHELL BRACKET
+        0x301A, // LEFT WHITE SQUARE BRACKET
+        0x301B, // RIGHT WHITE SQUARE BRACKET
+        0x301D, // REVERSED DOUBLE PRIME QUOTATION MARK
+        0x301E, // DOUBLE PRIME QUOTATION MARK
+        0x3041, // HIRAGANA LETTER SMALL A
+        0x3043, // HIRAGANA LETTER SMALL I
+        0x3045, // HIRAGANA LETTER SMALL U
+        0x3047, // HIRAGANA LETTER SMALL E
+        0x3049, // HIRAGANA LETTER SMALL O
+        0x3063, // HIRAGANA LETTER SMALL TU
+        0x3083, // HIRAGANA LETTER SMALL YA
+        0x3085, // HIRAGANA LETTER SMALL YU
+        0x3087, // HIRAGANA LETTER SMALL YO
+        0x308E, // HIRAGANA LETTER SMALL WA
+        0x309B, // KATAKANA-HIRAGANA VOICED SOUND MARK
+        0x309C, // KATAKANA-HIRAGANA SEMI-VOICED SOUND MARK
+        0x309D, // HIRAGANA ITERATION MARK
+        0x309E, // HIRAGANA VOICED ITERATION MARK
+        0x30A1, // KATAKANA LETTER SMALL A
+        0x30A3, // KATAKANA LETTER SMALL I
+        0x30A5, // KATAKANA LETTER SMALL U
+        0x30A7, // KATAKANA LETTER SMALL E
+        0x30A9, // KATAKANA LETTER SMALL O
+        0x30C3, // KATAKANA LETTER SMALL TU
+        0x30E3, // KATAKANA LETTER SMALL YA
+        0x30E5, // KATAKANA LETTER SMALL YU
+        0x30E7, // KATAKANA LETTER SMALL YO
+        0x30EE, // KATAKANA LETTER SMALL WA
+        0x30F5, // KATAKANA LETTER SMALL KA
+        0x30F6, // KATAKANA LETTER SMALL KE
+        0x30FC, // KATAKANA-HIRAGANA PROLONGED SOUND MARK
+        0x30FD, // KATAKANA ITERATION MARK
+        0x30FE, // KATAKANA VOICED ITERATION MARK
+        0xFD3E, // ORNATE LEFT PARENTHESIS
+        0xFD3F, // ORNATE RIGHT PARENTHESIS
+        0xFE30, // VERTICAL TWO DOT LEADER
+        0xFE31, // VERTICAL EM DASH
+        0xFE33, // VERTICAL LOW LINE
+        0xFE34, // VERTICAL WAVY LOW LINE
+        0xFE35, // PRESENTATION FORM FOR VERTICAL LEFT PARENTHESIS
+        0xFE36, // PRESENTATION FORM FOR VERTICAL RIGHT PARENTHESIS
+        0xFE37, // PRESENTATION FORM FOR VERTICAL LEFT CURLY BRACKET
+        0xFE38, // PRESENTATION FORM FOR VERTICAL RIGHT CURLY BRACKET
+        0xFE39, // PRESENTATION FORM FOR VERTICAL LEFT TORTOISE SHELL BRACKET
+        0xFE3A, // PRESENTATION FORM FOR VERTICAL RIGHT TORTOISE SHELL BRACKET
+        0xFE3B, // PRESENTATION FORM FOR VERTICAL LEFT BLACK LENTICULAR BRACKET
+        0xFE3C, // PRESENTATION FORM FOR VERTICAL RIGHT BLACK LENTICULAR BRACKET
+        0xFE3D, // PRESENTATION FORM FOR VERTICAL LEFT DOUBLE ANGLE BRACKET
+        0xFE3E, // PRESENTATION FORM FOR VERTICAL RIGHT DOUBLE ANGLE BRACKET
+        0xFE3F, // PRESENTATION FORM FOR VERTICAL LEFT ANGLE BRACKET
+        0xFE40, // PRESENTATION FORM FOR VERTICAL RIGHT ANGLE BRACKET
+        0xFE41, // PRESENTATION FORM FOR VERTICAL LEFT CORNER BRACKET
+        0xFE42, // PRESENTATION FORM FOR VERTICAL RIGHT CORNER BRACKET
+        0xFE43, // PRESENTATION FORM FOR VERTICAL LEFT WHITE CORNER BRACKET
+        0xFE44, // PRESENTATION FORM FOR VERTICAL RIGHT WHITE CORNER BRACKET
+        0xFE4F, // WAVY LOW LINE
+        0xFE50, // SMALL COMMA
+        0xFE51, // SMALL IDEOGRAPHIC COMMA
+        0xFE59, // SMALL LEFT PARENTHESIS
+        0xFE5A, // SMALL RIGHT PARENTHESIS
+        0xFE5B, // SMALL LEFT CURLY BRACKET
+        0xFE5C, // SMALL RIGHT CURLY BRACKET
+        0xFE5D, // SMALL LEFT TORTOISE SHELL BRACKET
+        0xFE5E, // SMALL RIGHT TORTOISE SHELL BRACKET
+        0xFF08, // FULLWIDTH LEFT PARENTHESIS
+        0xFF09, // FULLWIDTH RIGHT PARENTHESIS
+        0xFF0C, // FULLWIDTH COMMA
+        0xFF0E, // FULLWIDTH FULL STOP
+        0xFF1C, // FULLWIDTH LESS-THAN SIGN
+        0xFF1E, // FULLWIDTH GREATER-THAN SIGN
+        0xFF3B, // FULLWIDTH LEFT SQUARE BRACKET
+        0xFF3D, // FULLWIDTH RIGHT SQUARE BRACKET
+        0xFF40, // FULLWIDTH GRAVE ACCENT
+        0xFF5B, // FULLWIDTH LEFT CURLY BRACKET
+        0xFF5C, // FULLWIDTH VERTICAL LINE
+        0xFF5D, // FULLWIDTH RIGHT CURLY BRACKET
+        0xFF5E, // FULLWIDTH TILDE
+        0xFF61, // HALFWIDTH IDEOGRAPHIC FULL STOP
+        0xFF62, // HALFWIDTH LEFT CORNER BRACKET
+        0xFF63, // HALFWIDTH RIGHT CORNER BRACKET
+        0xFF64, // HALFWIDTH IDEOGRAPHIC COMMA
+        0xFF67, // HALFWIDTH KATAKANA LETTER SMALL A
+        0xFF68, // HALFWIDTH KATAKANA LETTER SMALL I
+        0xFF69, // HALFWIDTH KATAKANA LETTER SMALL U
+        0xFF6A, // HALFWIDTH KATAKANA LETTER SMALL E
+        0xFF6B, // HALFWIDTH KATAKANA LETTER SMALL O
+        0xFF6C, // HALFWIDTH KATAKANA LETTER SMALL YA
+        0xFF6D, // HALFWIDTH KATAKANA LETTER SMALL YU
+        0xFF6E, // HALFWIDTH KATAKANA LETTER SMALL YO
+        0xFF6F, // HALFWIDTH KATAKANA LETTER SMALL TU
+        0xFF70, // HALFWIDTH KATAKANA-HIRAGANA PROLONGED SOUND MARK
+        0xFF9E, // HALFWIDTH KATAKANA VOICED SOUND MARK
+        0xFF9F, // HALFWIDTH KATAKANA SEMI-VOICED SOUND MARK
+        0xFFE9, // HALFWIDTH LEFTWARDS ARROW
+        0xFFEB, // HALFWIDTH RIGHTWARDS ARROW
+    };
 
-	INT iMin = 0;
-	INT iMax = ARRAYSIZE(szBreakChars) - 1;
+    INT iMin = 0;
+    INT iMax = ARRAYSIZE(szBreakChars) - 1;
 
-	while (iMax - iMin >= 2) {
-		INT iTry = (iMax + iMin + 1) / 2;
+    while (iMax - iMin >= 2) {
+        INT iTry = (iMax + iMin + 1) / 2;
 
-		if (wch < szBreakChars[iTry]) {
-			iMax = iTry;
-		} else if (wch > szBreakChars[iTry]) {
-			iMin = iTry;
-		} else {
-			return TRUE;
-		}
-	}
+        if (wch < szBreakChars[iTry]) {
+            iMax = iTry;
+        } else if (wch > szBreakChars[iTry]) {
+            iMin = iTry;
+        } else {
+            return TRUE;
+        }
+    }
 
-	return (wch == szBreakChars[iMin] || wch == szBreakChars[iMax]);
+    return (wch == szBreakChars[iMin] || wch == szBreakChars[iMax]);
 }
 
 //#define ISDELIMITERW(ch) (((ch) == L' ') || ((ch) == L'\t'))
@@ -1859,80 +1859,80 @@ BOOL IsBreakChar(
 // This function is not actually set as the edit control's word
 // break procedure. It is used only for Ctrl+Backspace support.
 INT CALLBACK EditWordBreakProc(
-	LPWSTR	lpszEditText,
-	INT		ichCurrent,
-	INT		cch,
-	INT		code)
+    LPWSTR    lpszEditText,
+    INT        ichCurrent,
+    INT        cch,
+    INT        code)
 {
-	LPWSTR lpsz = lpszEditText + ichCurrent;
-	INT iIndex = ichCurrent;
-	BOOL bFoundNonDelimiter = FALSE;
-	
-	switch (code) {
-	case WB_LEFT:
-		while ((lpsz = CharPrev(lpszEditText, lpsz)) != lpszEditText) {
-			if (IsBreakChar(*lpsz)) {
-				if (bFoundNonDelimiter) {
-					break;
-				}
-			} else {
-				bFoundNonDelimiter = TRUE;
-			}
-		}
+    LPWSTR lpsz = lpszEditText + ichCurrent;
+    INT iIndex = ichCurrent;
+    BOOL bFoundNonDelimiter = FALSE;
+    
+    switch (code) {
+    case WB_LEFT:
+        while ((lpsz = CharPrev(lpszEditText, lpsz)) != lpszEditText) {
+            if (IsBreakChar(*lpsz)) {
+                if (bFoundNonDelimiter) {
+                    break;
+                }
+            } else {
+                bFoundNonDelimiter = TRUE;
+            }
+        }
 
-		iIndex = (INT) (lpsz - lpszEditText);
+        iIndex = (INT) (lpsz - lpszEditText);
 
-		if (iIndex > 0 && iIndex < cch) {
-			iIndex++;
-		}
+        if (iIndex > 0 && iIndex < cch) {
+            iIndex++;
+        }
 
-		break;
-	}
+        break;
+    }
 
-	return iIndex;
+    return iIndex;
 }
 
 LRESULT CALLBACK EditWndProc(
-		HWND		hwnd,
-		UINT		message,
-		WPARAM		wParam,
-		LPARAM		lParam)
+        HWND        hwnd,
+        UINT        message,
+        WPARAM        wParam,
+        LPARAM        lParam)
 {
-	// NotepadEx change from some time ago, that I forgot to comment:
-	// Support Ctrl+Backspace to delete a word.
-	if (message == WM_CHAR && wParam == VK_F16) {
-		HLOCAL hBuf;
-		LPWSTR lpszBuf;
-		DWORD dwCurrentSelStart;
-		DWORD dwNewSelStart;
+    // NotepadEx change from some time ago, that I forgot to comment:
+    // Support Ctrl+Backspace to delete a word.
+    if (message == WM_CHAR && wParam == VK_F16) {
+        HLOCAL hBuf;
+        LPWSTR lpszBuf;
+        DWORD dwCurrentSelStart;
+        DWORD dwNewSelStart;
 
-		SendMessage(hwnd, EM_GETSEL, (WPARAM) &dwCurrentSelStart, 0);
-		hBuf = (HLOCAL) SendMessage(hwnd, EM_GETHANDLE, 0, 0);
+        SendMessage(hwnd, EM_GETSEL, (WPARAM) &dwCurrentSelStart, 0);
+        hBuf = (HLOCAL) SendMessage(hwnd, EM_GETHANDLE, 0, 0);
 
-		if (!hBuf) {
-			goto Error;
-		}
+        if (!hBuf) {
+            goto Error;
+        }
 
-		lpszBuf = (LPWSTR) LocalLock(hBuf);
-		dwNewSelStart = EditWordBreakProc(
-			lpszBuf,
-			dwCurrentSelStart,
-			GetWindowTextLength(hwnd),
-			WB_LEFT);
-		LocalUnlock(hBuf);
+        lpszBuf = (LPWSTR) LocalLock(hBuf);
+        dwNewSelStart = EditWordBreakProc(
+            lpszBuf,
+            dwCurrentSelStart,
+            GetWindowTextLength(hwnd),
+            WB_LEFT);
+        LocalUnlock(hBuf);
 
-		// The WM_SETREDRAW messages are necessary to avoid briefly flashing
-		// the selection on the edit control.
-		SendMessage(hwnd, WM_SETREDRAW, FALSE, 0);
-		SendMessage(hwnd, EM_SETSEL, dwNewSelStart, dwCurrentSelStart);
-		SendMessage(hwnd, EM_REPLACESEL, TRUE, (LPARAM) L"");
-		SendMessage(hwnd, WM_SETREDRAW, TRUE, 0);
-			
-		return 0;
-	}
+        // The WM_SETREDRAW messages are necessary to avoid briefly flashing
+        // the selection on the edit control.
+        SendMessage(hwnd, WM_SETREDRAW, FALSE, 0);
+        SendMessage(hwnd, EM_SETSEL, dwNewSelStart, dwCurrentSelStart);
+        SendMessage(hwnd, EM_REPLACESEL, TRUE, (LPARAM) L"");
+        SendMessage(hwnd, WM_SETREDRAW, TRUE, 0);
+            
+        return 0;
+    }
 
 Error:
-	return CallWindowProc(DefEditWindowProc, hwnd, message, wParam, lParam);
+    return CallWindowProc(DefEditWindowProc, hwnd, message, wParam, lParam);
 }
 
 /* Notepad window class procedure */
@@ -2078,8 +2078,8 @@ WNDPROC FAR NPWndProc(
                     SendMessage(hwndStatus, WM_SIZE, 0, 0L);
 
                     // Divide the status window into three parts
-					iParts[0] = 2 * (MAKEPOINTS(lParam).x)/4;
-					iParts[1] = 3 * (MAKEPOINTS(lParam).x)/4;
+                    iParts[0] = 2 * (MAKEPOINTS(lParam).x)/4;
+                    iParts[1] = 3 * (MAKEPOINTS(lParam).x)/4;
                     iParts[2] = -1;
                     SendMessage(hwndStatus, SB_SETPARTS, (WPARAM) sizeof(iParts)/sizeof(INT), (LPARAM) &iParts[0]);
 
@@ -2153,12 +2153,12 @@ WNDPROC FAR NPWndProc(
                 lpfr = (LPFINDREPLACE)lParam;
                 dwFlags = lpfr->Flags;
 
-                fReverse	= (dwFlags & FR_DOWN      ? FALSE : TRUE);
-				// NotepadEx: These are no longer required because we are setting
-				// them directly in the find&replace hook procedure.
-                //fCase		= (dwFlags & FR_MATCHCASE ? TRUE  : FALSE);
-				//fWholeWord	= (dwFlags & FR_WHOLEWORD ? TRUE  : FALSE);
-				//fWrapAround = (lpfr->lCustData & 1	  ? TRUE  : FALSE);
+                fReverse    = (dwFlags & FR_DOWN      ? FALSE : TRUE);
+                // NotepadEx: These are no longer required because we are setting
+                // them directly in the find&replace hook procedure.
+                //fCase        = (dwFlags & FR_MATCHCASE ? TRUE  : FALSE);
+                //fWholeWord    = (dwFlags & FR_WHOLEWORD ? TRUE  : FALSE);
+                //fWrapAround = (lpfr->lCustData & 1      ? TRUE  : FALSE);
 
                 if( dwFlags & FR_FINDNEXT )
                 {
@@ -2209,7 +2209,7 @@ WNDPROC FAR NPWndProc(
                    SendMessage( hwndEdit, EM_SETSEL, 0, 0 );
                    SendMessage( hwndEdit, EM_SCROLLCARET, 0, 0);
                    UpdateStatusBar( TRUE ); // pass TRUE because it's more efficient considering we're at the top
-				}
+                }
                 else if (dwFlags & FR_DIALOGTERM)
                     hDlgFind = NULL;   /* invalidate modeless window handle */
                 break;
@@ -2245,9 +2245,9 @@ LPTSTR SkipProgramName (LPTSTR lpCmdLine)
 /* ** Main loop */
 
 VOID EntryPoint(
-	VOID)
+    VOID)
 {
-	ExitProcess(WinMain(GetModuleHandle(NULL), NULL, NULL, TRUE));
+    ExitProcess(WinMain(GetModuleHandle(NULL), NULL, NULL, TRUE));
 }
 
 INT WINAPI WinMain(
@@ -2260,7 +2260,7 @@ INT WINAPI WinMain(
     LPTSTR lpCmdLine = GetCommandLine ();
     HWINEVENTHOOK hEventHook = NULL;
 
-	CoInitialize(NULL);
+    CoInitialize(NULL);
 
     if (!NPInit(hInstance, hPrevInstance, SkipProgramName (lpCmdLine), cmdShow))
     {
@@ -2301,10 +2301,10 @@ INT WINAPI WinMain(
     LocalFree( hEdit );
 
     if (hEventHook) {
-		UnhookWinEvent(hEventHook);
-	}
+        UnhookWinEvent(hEventHook);
+    }
 
-	return (INT) (msg.wParam);
+    return (INT) (msg.wParam);
 }
 
 static DWORD iLastCol;
@@ -2318,119 +2318,119 @@ static NP_LINETYPE ltLastLineType;
 //   - the 1-based real line number
 //   - the 1-based real column number
 VOID GetEditControlRealPosition(
-	IN	HWND	Window,
-	IN	ULONG	CharacterIndex,
-	OUT	PUINT	LineNumber,
-	OUT	PUINT	ColumnNumber)
+    IN    HWND    Window,
+    IN    ULONG    CharacterIndex,
+    OUT    PUINT    LineNumber,
+    OUT    PUINT    ColumnNumber)
 {
-	HLOCAL EditControlBufferHandle;
-	PWSTR EditControlBuffer;
-	ULONG Index;
-	UINT LineNumberTemp;
-	UINT ColumnNumberTemp;
+    HLOCAL EditControlBufferHandle;
+    PWSTR EditControlBuffer;
+    ULONG Index;
+    UINT LineNumberTemp;
+    UINT ColumnNumberTemp;
 
-	Index = 0;
-	LineNumberTemp = 1;
-	ColumnNumberTemp = 1;
+    Index = 0;
+    LineNumberTemp = 1;
+    ColumnNumberTemp = 1;
 
-	EditControlBufferHandle = Edit_GetHandle(Window);
+    EditControlBufferHandle = Edit_GetHandle(Window);
 
-	if (!EditControlBufferHandle) {
-		return;
-	}
+    if (!EditControlBufferHandle) {
+        return;
+    }
 
-	EditControlBuffer = (PWSTR) LocalLock(EditControlBufferHandle);
+    EditControlBuffer = (PWSTR) LocalLock(EditControlBufferHandle);
 
-	if (!EditControlBuffer) {
-		return;
-	}
+    if (!EditControlBuffer) {
+        return;
+    }
 
-	while (TRUE) {
-		if (EditControlBuffer[Index] == '\0') {
-			break;
-		}
+    while (TRUE) {
+        if (EditControlBuffer[Index] == '\0') {
+            break;
+        }
 
-		if (EditControlBuffer[Index] == '\n') {
-			++LineNumberTemp;
-			ColumnNumberTemp = 0;
-		}
+        if (EditControlBuffer[Index] == '\n') {
+            ++LineNumberTemp;
+            ColumnNumberTemp = 0;
+        }
 
-		if (Index == CharacterIndex) {
-			break;
-		}
+        if (Index == CharacterIndex) {
+            break;
+        }
 
-		++Index;
-		++ColumnNumberTemp;
-	}
+        ++Index;
+        ++ColumnNumberTemp;
+    }
 
-	LocalUnlock(EditControlBufferHandle);
+    LocalUnlock(EditControlBufferHandle);
 
-	*LineNumber = LineNumberTemp;
-	*ColumnNumber = ColumnNumberTemp;
+    *LineNumber = LineNumberTemp;
+    *ColumnNumber = ColumnNumberTemp;
 }
 
 VOID UpdateEditControlRealPosition(
-	IN	HWND	Window,
-	IN	ULONG	CharacterIndex,
-	IN	ULONG	LastCharacterIndex,
-	OUT	PUINT	LineNumber,
-	OUT	PUINT	ColumnNumber)
+    IN    HWND    Window,
+    IN    ULONG    CharacterIndex,
+    IN    ULONG    LastCharacterIndex,
+    OUT    PUINT    LineNumber,
+    OUT    PUINT    ColumnNumber)
 {
-	HLOCAL EditControlBufferHandle;
-	PWSTR EditControlBuffer;
-	ULONG Index;
-	ULONG EndIndex;
-	UINT LineNumberDelta;
-	UINT ColumnNumberTemp;
+    HLOCAL EditControlBufferHandle;
+    PWSTR EditControlBuffer;
+    ULONG Index;
+    ULONG EndIndex;
+    UINT LineNumberDelta;
+    UINT ColumnNumberTemp;
 
-	Index = min(CharacterIndex, LastCharacterIndex);
-	EndIndex = max(CharacterIndex, LastCharacterIndex);
-	LineNumberDelta = 0;
-	ColumnNumberTemp = 0;
+    Index = min(CharacterIndex, LastCharacterIndex);
+    EndIndex = max(CharacterIndex, LastCharacterIndex);
+    LineNumberDelta = 0;
+    ColumnNumberTemp = 0;
 
-	EditControlBufferHandle = Edit_GetHandle(Window);
+    EditControlBufferHandle = Edit_GetHandle(Window);
 
-	if (!EditControlBufferHandle) {
-		return;
-	}
+    if (!EditControlBufferHandle) {
+        return;
+    }
 
-	EditControlBuffer = (PWSTR) LocalLock(EditControlBufferHandle);
+    EditControlBuffer = (PWSTR) LocalLock(EditControlBufferHandle);
 
-	if (!EditControlBuffer) {
-		return;
-	}
+    if (!EditControlBuffer) {
+        return;
+    }
 
-	// calculate line number delta by counting the number of \n characters
-	// between the current position and the previous position
-	while (Index < EndIndex) {
-		if (EditControlBuffer[Index] == '\n') {
-			++LineNumberDelta;
-		}
+    // calculate line number delta by counting the number of \n characters
+    // between the current position and the previous position
+    while (Index < EndIndex) {
+        if (EditControlBuffer[Index] == '\n') {
+            ++LineNumberDelta;
+        }
 
-		++Index;
-	}
+        ++Index;
+    }
 
-	// calculate column number - how many chars forward is the last \n?
-	Index = CharacterIndex;
+    // calculate column number - how many chars forward is the last \n?
+    Index = CharacterIndex;
 
-	do {
-		if (EditControlBuffer[Index] == '\n') {
-			break;
-		}
+    do {
+        if (EditControlBuffer[Index] == '\n') {
+            break;
+        }
 
-		++ColumnNumberTemp;
-		--Index;
-	} while (Index != -1);
+        ++ColumnNumberTemp;
+        --Index;
+    } while (Index != -1);
 
-	LocalUnlock(EditControlBufferHandle);
+    LocalUnlock(EditControlBufferHandle);
 
-	*ColumnNumber = ColumnNumberTemp;
-	
-	if (CharacterIndex > LastCharacterIndex) {
-		*LineNumber += LineNumberDelta;
-	} else {
-		*LineNumber -= LineNumberDelta;
-	}
+    *ColumnNumber = ColumnNumberTemp;
+    
+    if (CharacterIndex > LastCharacterIndex) {
+        *LineNumber += LineNumberDelta;
+    } else {
+        *LineNumber -= LineNumberDelta;
+    }
 }
 
 VOID UpdateStatusBar( BOOL fForceStatus )
@@ -2438,47 +2438,47 @@ VOID UpdateStatusBar( BOOL fForceStatus )
     DWORD SelStart, SelEnd;
     UINT  iLine, iCol;
     TCHAR szStatusText[128];
-	NP_LINETYPE ltLineType;
+    NP_LINETYPE ltLineType;
 
     // get the current caret position.
-	SendMessage(hwndEdit, EM_GETSEL, (WPARAM) &SelStart, (WPARAM) &SelEnd);
+    SendMessage(hwndEdit, EM_GETSEL, (WPARAM) &SelStart, (WPARAM) &SelEnd);
 
-	if (fWrap) {
-		// NotepadEx change: Support calculating the real cursor position
-		// when word wrap is enabled.
+    if (fWrap) {
+        // NotepadEx change: Support calculating the real cursor position
+        // when word wrap is enabled.
 
-		if (fForceStatus) {
-			// fully recalculate position
-			GetEditControlRealPosition(hwndEdit, SelStart, &iLine, &iCol);
-		} else {
-			// partial recalculation based on last position
-			iLine = iLastLine;
-			iCol = iLastCol;
-			UpdateEditControlRealPosition(hwndEdit, SelStart, iLastSelStart, &iLine, &iCol);
-		}
-	} else {
-		// the line numbers are 1 based instead 0 based. hence add 1.
-		iLine = (UINT) SendMessage( hwndEdit, EM_LINEFROMCHAR, SelStart, 0 ) + 1;
-		iCol = SelStart - (UINT) SendMessage( hwndEdit, EM_LINEINDEX, iLine-1, 0 ) + 1;
-	}
+        if (fForceStatus) {
+            // fully recalculate position
+            GetEditControlRealPosition(hwndEdit, SelStart, &iLine, &iCol);
+        } else {
+            // partial recalculation based on last position
+            iLine = iLastLine;
+            iCol = iLastCol;
+            UpdateEditControlRealPosition(hwndEdit, SelStart, iLastSelStart, &iLine, &iCol);
+        }
+    } else {
+        // the line numbers are 1 based instead 0 based. hence add 1.
+        iLine = (UINT) SendMessage( hwndEdit, EM_LINEFROMCHAR, SelStart, 0 ) + 1;
+        iCol = SelStart - (UINT) SendMessage( hwndEdit, EM_LINEINDEX, iLine-1, 0 ) + 1;
+    }
 
-	// 18-08-2022 NotepadEx change
-	// Try to get the actual position of the cursor instead of just the start of the
-	// selection. The mechanism to do this "properly" was added in Windows 10 so that's
-	// why we have to use this hacky method. But it works, and it works well.
-	if (SelStart != SelEnd) {
-		// there is actual text selected, not just a simple cursor.
-		// we have to figure out the "direction" that the user selected text - whether
-		// it is "upwards" or "downwards". If it's "upwards" we don't need to do anything.
-		// Otherwise we need to set the line/column to the end of the selection.
+    // 18-08-2022 NotepadEx change
+    // Try to get the actual position of the cursor instead of just the start of the
+    // selection. The mechanism to do this "properly" was added in Windows 10 so that's
+    // why we have to use this hacky method. But it works, and it works well.
+    if (SelStart != SelEnd) {
+        // there is actual text selected, not just a simple cursor.
+        // we have to figure out the "direction" that the user selected text - whether
+        // it is "upwards" or "downwards". If it's "upwards" we don't need to do anything.
+        // Otherwise we need to set the line/column to the end of the selection.
 
-		if (SelRoot < SelEnd) {
-			iLine = (UINT) SendMessage(hwndEdit, EM_LINEFROMCHAR, SelEnd, 0) + 1;
-			iCol = SelEnd - (UINT) SendMessage(hwndEdit, EM_LINEINDEX, iLine - 1, 0) + 1;
-		}
-	} else {
-		SelRoot = SelStart;
-	} // end of NotepadEx change
+        if (SelRoot < SelEnd) {
+            iLine = (UINT) SendMessage(hwndEdit, EM_LINEFROMCHAR, SelEnd, 0) + 1;
+            iCol = SelEnd - (UINT) SendMessage(hwndEdit, EM_LINEINDEX, iLine - 1, 0) + 1;
+        }
+    } else {
+        SelRoot = SelStart;
+    } // end of NotepadEx change
 
     // don't bother to update status if it hasn't changed
     if( fForceStatus || (iCol!=iLastCol) || (iLine!=iLastLine) )
@@ -2490,19 +2490,19 @@ VOID UpdateStatusBar( BOOL fForceStatus )
         SetStatusBarText(szStatusText, 2);
     }
 
-	ltLineType = g_ltOpenedAs;
+    ltLineType = g_ltOpenedAs;
 
-	if (ltLineType != ltLastLineType) {
-		switch (g_ltOpenedAs) {
-		case LT_WINDOWS:	SetStatusBarText(szWindowsFile, 1); break;
-		case LT_UNIX:		SetStatusBarText(szUnixFile, 1); break;
-		}
-	}
+    if (ltLineType != ltLastLineType) {
+        switch (g_ltOpenedAs) {
+        case LT_WINDOWS:    SetStatusBarText(szWindowsFile, 1); break;
+        case LT_UNIX:        SetStatusBarText(szUnixFile, 1); break;
+        }
+    }
 
-	ltLastLineType = ltLineType;
+    ltLastLineType = ltLineType;
     iLastCol=  iCol;
     iLastLine= iLine;
-	iLastSelStart = SelStart;
+    iLastSelStart = SelStart;
 };
 
 // WinEventFunc is called whenever the location of the caret changes
@@ -2610,22 +2610,22 @@ void FAR SetTitle( TCHAR  *sz )
     }
 
     // set the line ending type displayed to the user upon opening a new
-	// file
-	switch (g_ltOpenedAs) {
-	case LT_WINDOWS:	SetStatusBarText(szWindowsFile, 1);	break;
-	case LT_UNIX:		SetStatusBarText(szUnixFile, 1);	break;
-	}
-	// Note: Commenting out the two lines below, and replacing with a call to UpdateStatusBar,
-	// fixes a bug in all official Microsoft versions of Notepad, in which saving the file resets
-	// the displayed cursor position (but not the actual cursor position) to 1,1 for some reason.
-	// If this introduces a regression, the old behavior can be restored by uncommenting.
+    // file
+    switch (g_ltOpenedAs) {
+    case LT_WINDOWS:    SetStatusBarText(szWindowsFile, 1);    break;
+    case LT_UNIX:        SetStatusBarText(szUnixFile, 1);    break;
+    }
+    // Note: Commenting out the two lines below, and replacing with a call to UpdateStatusBar,
+    // fixes a bug in all official Microsoft versions of Notepad, in which saving the file resets
+    // the displayed cursor position (but not the actual cursor position) to 1,1 for some reason.
+    // If this introduces a regression, the old behavior can be restored by uncommenting.
     //_sntprintf(szStatusText, sizeof(szStatusText)/sizeof(TCHAR) -1, szLineCol, 1, 1);
     //SetStatusBarText(szStatusText, 2);
-	UpdateStatusBar(TRUE);
+    UpdateStatusBar(TRUE);
 
     lstrcat(szWindowText, szNpTitle);
     SetWindowText(hwndNP, (LPTSTR)szWindowText);
-	g_bDirty = FALSE;
+    g_bDirty = FALSE;
 }
 
 /* ** Given filename which may or maynot include path, return pointer to
@@ -2705,11 +2705,11 @@ VOID NpResetMenu( HWND hwnd )
         mfcc= MF_ENABLED;
     }
 
-    EnableMenuItem( GetSubMenu(hMenu,1), M_FIND,			mfcc );
-    EnableMenuItem( GetSubMenu(hMenu,1), M_FINDNEXT,		mfcc );
-	EnableMenuItem( GetSubMenu(hMenu,1), M_FINDPREVIOUS,	mfcc ); // NotepadEx
-	EnableMenuItem( GetSubMenu(hMenu,1), M_REPLACE,         mfcc ); // NotepadEx
-	EnableMenuItem( GetSubMenu(hMenu,1), M_GOTO,			mfcc ); // NotepadEx
+    EnableMenuItem( GetSubMenu(hMenu,1), M_FIND,            mfcc );
+    EnableMenuItem( GetSubMenu(hMenu,1), M_FINDNEXT,        mfcc );
+    EnableMenuItem( GetSubMenu(hMenu,1), M_FINDPREVIOUS,    mfcc ); // NotepadEx
+    EnableMenuItem( GetSubMenu(hMenu,1), M_REPLACE,         mfcc ); // NotepadEx
+    EnableMenuItem( GetSubMenu(hMenu,1), M_GOTO,            mfcc ); // NotepadEx
 
     // enable Undo only if editcontrol says we can do it.
     fCanUndo = (BOOL) SendMessage(hwndEdit, EM_CANUNDO, 0, 0L);
@@ -2718,10 +2718,10 @@ VOID NpResetMenu( HWND hwnd )
     // check the word wrap item correctly
     CheckMenuItem(GetSubMenu(hMenu, 2), M_WW, fWrap ? MF_CHECKED : MF_UNCHECKED);
 
-	// tab stops/tab width menu
-	CheckMenuItem(GetSubMenu(hMenu, 2), M_TW2, iTabStops == 8 ? MF_CHECKED : MF_UNCHECKED);
-	CheckMenuItem(GetSubMenu(hMenu, 2), M_TW4, iTabStops == 16 ? MF_CHECKED : MF_UNCHECKED);
-	CheckMenuItem(GetSubMenu(hMenu, 2), M_TW8, iTabStops == 32 ? MF_CHECKED : MF_UNCHECKED);
+    // tab stops/tab width menu
+    CheckMenuItem(GetSubMenu(hMenu, 2), M_TW2, iTabStops == 8 ? MF_CHECKED : MF_UNCHECKED);
+    CheckMenuItem(GetSubMenu(hMenu, 2), M_TW4, iTabStops == 16 ? MF_CHECKED : MF_UNCHECKED);
+    CheckMenuItem(GetSubMenu(hMenu, 2), M_TW8, iTabStops == 32 ? MF_CHECKED : MF_UNCHECKED);
 
     // check the status bar
 
@@ -3014,7 +3014,7 @@ INT_PTR CALLBACK GotoDlgProc(HWND hDlg,UINT message,WPARAM wParam,LPARAM lParam)
                     // see if valid line number
                     //
 
-					Success = GotoAndScrollInView(lGotoLine);
+                    Success = GotoAndScrollInView(lGotoLine);
 
                     if (Success) {
                         EndDialog(hDlg, 0);  // successfull
@@ -3023,22 +3023,22 @@ INT_PTR CALLBACK GotoDlgProc(HWND hDlg,UINT message,WPARAM wParam,LPARAM lParam)
 
                     //
                     // Invalid line number - warn the user.
-					// NotepadEx change: Use edit control balloon tips on Windows
-					// versions that support it (XP and up).
+                    // NotepadEx change: Use edit control balloon tips on Windows
+                    // versions that support it (XP and up).
                     //
 
-					if (*(PULONG)0x7FFE026C > 6 || *(PULONG)0x7FFE0270 > 0) {
-						EDITBALLOONTIP BalloonTip;
+                    if (*(PULONG)0x7FFE026C > 6 || *(PULONG)0x7FFE0270 > 0) {
+                        EDITBALLOONTIP BalloonTip;
 
-						BalloonTip.cbStruct	= sizeof(BalloonTip);
-						BalloonTip.pszTitle	= NULL;
-						BalloonTip.pszText	= szLineTooLarge;
-						BalloonTip.ttiIcon	= TTI_NONE;
-						Edit_ShowBalloonTip(GetDlgItem(hDlg, IDC_GOTO), &BalloonTip);
-					} else {
-						MessageBox(hDlg, szLineTooLarge, szLineError, MB_OK);
-						SetFocus(hDlg);
-					}
+                        BalloonTip.cbStruct    = sizeof(BalloonTip);
+                        BalloonTip.pszTitle    = NULL;
+                        BalloonTip.pszText    = szLineTooLarge;
+                        BalloonTip.ttiIcon    = TTI_NONE;
+                        Edit_ShowBalloonTip(GetDlgItem(hDlg, IDC_GOTO), &BalloonTip);
+                    } else {
+                        MessageBox(hDlg, szLineTooLarge, szLineError, MB_OK);
+                        SetFocus(hDlg);
+                    }
 
                     break;
 

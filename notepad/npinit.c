@@ -132,12 +132,12 @@ VOID SaveGlobals(VOID)
     RegWriteInt( hKey, TEXT("lfQuality"),        FontStruct.lfQuality);
     RegWriteInt( hKey, TEXT("lfPitchAndFamily"), FontStruct.lfPitchAndFamily);
     RegWriteInt( hKey, TEXT("iPointSize"),       iPointSize);
-	RegWriteInt( hKey, TEXT("iTabStops"),		 iTabStops);
+    RegWriteInt( hKey, TEXT("iTabStops"),         iTabStops);
     RegWriteInt( hKey, TEXT("fWrap"),            fWrap);
     RegWriteInt( hKey, TEXT("StatusBar"),        fStatus);
-	RegWriteInt( hKey, TEXT("fWholeWord"),		 fWholeWord);
-	RegWriteInt( hKey, TEXT("fCase"),			 fCase);
-	RegWriteInt( hKey, TEXT("fWrapAround"),		 fWrapAround);
+    RegWriteInt( hKey, TEXT("fWholeWord"),         fWholeWord);
+    RegWriteInt( hKey, TEXT("fCase"),             fCase);
+    RegWriteInt( hKey, TEXT("fWrapAround"),         fWrapAround);
 
     RegWriteInt( hKey, TEXT("fSaveWindowPositions"),fSaveWindowPositions );
 
@@ -232,12 +232,12 @@ VOID GetGlobals( VOID )
     RegGetString( hKey, TEXT("lfFaceName"), TEXT("Lucida Console"), FontStruct.lfFaceName, LF_FACESIZE);
 
     iPointSize= RegGetInt( hKey, TEXT("iPointSize"), 100);
-	iTabStops=	RegGetInt( hKey, TEXT("iTabStops"),	 32);
+    iTabStops=    RegGetInt( hKey, TEXT("iTabStops"),     32);
     fWrap=      RegGetInt( hKey, TEXT("fWrap"),      0);
     fStatus=    RegGetInt( hKey, TEXT("StatusBar"),  0);
-	fWholeWord=	RegGetInt( hKey, TEXT("fWholeWord"), 0);
-	fCase=		RegGetInt( hKey, TEXT("fCase"),		 0);
-	fWrapAround=RegGetInt( hKey, TEXT("fWrapAround"),0);
+    fWholeWord=    RegGetInt( hKey, TEXT("fWholeWord"), 0);
+    fCase=        RegGetInt( hKey, TEXT("fCase"),         0);
+    fWrapAround=RegGetInt( hKey, TEXT("fWrapAround"),0);
     fSaveWindowPositions= RegGetInt( hKey, TEXT("fSaveWindowPositions"), 0 );
 
     // if page settings not in registry, we will use defaults
@@ -257,20 +257,20 @@ VOID GetGlobals( VOID )
     g_WPDX=   RegGetInt( hKey, TEXT("iWindowPosDX"), CW_USEDEFAULT );
     g_WPDY=   RegGetInt( hKey, TEXT("iWindowPosDY"), CW_USEDEFAULT );
     
-	// put CW_USEDEFAULT back in the registry, so that if the user opens
-	// more notepad windows they will be cascaded. (NotepadEx change)
-	RegWriteInt(hKey, L"iWindowPosX", CW_USEDEFAULT);
-	RegWriteInt(hKey, L"iWindowPosY", CW_USEDEFAULT);
+    // put CW_USEDEFAULT back in the registry, so that if the user opens
+    // more notepad windows they will be cascaded. (NotepadEx change)
+    RegWriteInt(hKey, L"iWindowPosX", CW_USEDEFAULT);
+    RegWriteInt(hKey, L"iWindowPosY", CW_USEDEFAULT);
 
     fMLE_is_broken= RegGetInt( hKey, TEXT("fMLE_is_broken"), FALSE );  // assume edit control works
 
-	// 18-08-2022: Respect registry settings regarding windows 10 notepad and Unix line endings
-	fWindowsOnlyEOL = RegGetInt(hKey, TEXT("fWindowsOnlyEOL"), 0);
+    // 18-08-2022: Respect registry settings regarding windows 10 notepad and Unix line endings
+    fWindowsOnlyEOL = RegGetInt(hKey, TEXT("fWindowsOnlyEOL"), 0);
 
-	if( hKey )
-	{
-		RegCloseKey( hKey );
-	}
+    if( hKey )
+    {
+        RegCloseKey( hKey );
+    }
 
 }
 
@@ -853,9 +853,9 @@ INT FAR NPInit (HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
     GetClientRect( hwndNP, (LPRECT) &rcT1 );
 
-	// Btw, the Windows 10 notepad omits WS_EX_CLIENTEDGE for this call
-	// and all subsequent creations of the edit window. But I think that
-	// looks quite bad on Win7, so the existing behavior will be retained.
+    // Btw, the Windows 10 notepad omits WS_EX_CLIENTEDGE for this call
+    // and all subsequent creations of the edit window. But I think that
+    // looks quite bad on Win7, so the existing behavior will be retained.
     if (!(hwndEdit = CreateWindowEx(WS_EX_CLIENTEDGE,
                      TEXT("Edit"), TEXT(""),
                      (fWrap) ? ES_STD : (ES_STD | WS_HSCROLL),
@@ -863,26 +863,26 @@ INT FAR NPInit (HINSTANCE hInstance, HINSTANCE hPrevInstance,
                      hwndNP, (HMENU)ID_EDIT, hInstance, (LPVOID)NULL)))
         return FALSE;
 
-	// assign window procedure to edit control
-	DefEditWindowProc = (WNDPROC) SetWindowLongPtr(hwndEdit, GWLP_WNDPROC, (LONG_PTR) EditWndProc);
+    // assign window procedure to edit control
+    DefEditWindowProc = (WNDPROC) SetWindowLongPtr(hwndEdit, GWLP_WNDPROC, (LONG_PTR) EditWndProc);
 
     // create a status window.
     //hwndStatus = CreateStatusWindow ((fStatus?WS_VISIBLE:0)|WS_BORDER|WS_CHILD|WS_CLIPSIBLINGS, TEXT(""), hwndNP, ID_STATUS_WINDOW);
 
-	// NotepadEx: Using the WS_EX_COMPOSITED extended window style greatly
-	// helps with flickering on Vista+, and works especially great when
-	// DWM compositing is enabled.
-	// Windows 2000 compatibility is not affected.
-	hwndStatus = CreateWindowEx(
-		WS_EX_COMPOSITED,
-		STATUSCLASSNAME,
-		NULL,
-		(fStatus ? WS_VISIBLE : 0) | WS_BORDER | WS_CHILD | WS_CLIPSIBLINGS,
-		0, 0, 0, 0,
-		hwndNP,
-		(HMENU) ID_STATUS_WINDOW,
-		hInstance,
-		NULL);
+    // NotepadEx: Using the WS_EX_COMPOSITED extended window style greatly
+    // helps with flickering on Vista+, and works especially great when
+    // DWM compositing is enabled.
+    // Windows 2000 compatibility is not affected.
+    hwndStatus = CreateWindowEx(
+        WS_EX_COMPOSITED,
+        STATUSCLASSNAME,
+        NULL,
+        (fStatus ? WS_VISIBLE : 0) | WS_BORDER | WS_CHILD | WS_CLIPSIBLINGS,
+        0, 0, 0, 0,
+        hwndNP,
+        (HMENU) ID_STATUS_WINDOW,
+        hInstance,
+        NULL);
 
     UpdateStatusBar(TRUE);
     GetClientRect(hwndStatus, (LPRECT) &rcStatus);
@@ -891,7 +891,7 @@ INT FAR NPInit (HINSTANCE hInstance, HINSTANCE hPrevInstance,
     dyStatus = rcStatus.bottom - rcStatus.top;
 
     iParts[0] = 3 * (rcStatus.right-rcStatus.left)/4;
-	iParts[1] = 4 * (rcStatus.right-rcStatus.left)/4;
+    iParts[1] = 4 * (rcStatus.right-rcStatus.left)/4;
     iParts[2] = -1;
 
     // Divide the status window into three parts
@@ -907,8 +907,8 @@ INT FAR NPInit (HINSTANCE hInstance, HINSTANCE hPrevInstance,
                                  720);
     hFont= CreateFontIndirect( &FontStruct );
 
-	// handle tab stops
-	SendMessage(hwndEdit, EM_SETTABSTOPS, 1, (LPARAM) &iTabStops);
+    // handle tab stops
+    SendMessage(hwndEdit, EM_SETTABSTOPS, 1, (LPARAM) &iTabStops);
 
     //
     // Make sure the font mapper gives us the same face name.

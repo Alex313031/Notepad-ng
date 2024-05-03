@@ -7,8 +7,8 @@
 
 BOOL fCase = FALSE;         // Flag specifying case sensitive search 
 BOOL fReverse = FALSE;      // Flag for direction of search 
-BOOL fWholeWord = FALSE;	// Match whole word only
-BOOL fWrapAround = FALSE;	// Wrap around
+BOOL fWholeWord = FALSE;    // Match whole word only
+BOOL fWrapAround = FALSE;    // Wrap around
 
 extern HWND hDlgFind;       // handle to modeless FindText window 
 
@@ -16,86 +16,86 @@ BOOL IsBreakChar(WCHAR wch); // defined in notepad.c
 
 // Search for needle in the haystack from the end to the beginning.
 LPTSTR ReverseScan(
-	IN		LPTSTR	lpHaystack,
-	IN		LPTSTR	lpHaystackEnd OPTIONAL,
-	IN OUT	LPTSTR	lpNeedle,
-	IN		BOOL	fCaseSensitive)
+    IN        LPTSTR    lpHaystack,
+    IN        LPTSTR    lpHaystackEnd OPTIONAL,
+    IN OUT    LPTSTR    lpNeedle,
+    IN        BOOL    fCaseSensitive)
 {
-	TCHAR cLastCharU;
-	TCHAR cLastCharL;
-	ULONG NeedleLength;
+    TCHAR cLastCharU;
+    TCHAR cLastCharL;
+    ULONG NeedleLength;
 
-	cLastCharU = (TCHAR) (INT_PTR) CharUpper((LPTSTR)(INT_PTR)(*lpNeedle));
-	cLastCharL = (TCHAR) (INT_PTR) CharLower((LPTSTR)(INT_PTR)(*lpNeedle));
+    cLastCharU = (TCHAR) (INT_PTR) CharUpper((LPTSTR)(INT_PTR)(*lpNeedle));
+    cLastCharL = (TCHAR) (INT_PTR) CharLower((LPTSTR)(INT_PTR)(*lpNeedle));
 
-	NeedleLength = lstrlen(lpNeedle);
+    NeedleLength = lstrlen(lpNeedle);
 
-	if (!lpHaystackEnd) {
-		lpHaystackEnd = lpHaystack + lstrlen(lpHaystack);
-	}
+    if (!lpHaystackEnd) {
+        lpHaystackEnd = lpHaystack + lstrlen(lpHaystack);
+    }
 
-	do {
-		// NotepadEx fix: Change == to <= to make the code more robust
-		// in the case of invalid parameters. This isn't actually
-		// required, though. It just catches certain types of coding
-		// errors that I may or may not have introduced during development.
-		if (lpHaystackEnd <= lpHaystack) {
-			return NULL;
-		}
+    do {
+        // NotepadEx fix: Change == to <= to make the code more robust
+        // in the case of invalid parameters. This isn't actually
+        // required, though. It just catches certain types of coding
+        // errors that I may or may not have introduced during development.
+        if (lpHaystackEnd <= lpHaystack) {
+            return NULL;
+        }
 
-		--lpHaystackEnd;
+        --lpHaystackEnd;
 
-		if (fCaseSensitive) {
-			if (*lpHaystackEnd != *lpNeedle) {
-				continue;
-			}
-		} else {
-			if(!(*lpHaystackEnd == cLastCharU || *lpHaystackEnd == cLastCharL)) {
-				continue;
-			}
-		}
+        if (fCaseSensitive) {
+            if (*lpHaystackEnd != *lpNeedle) {
+                continue;
+            }
+        } else {
+            if(!(*lpHaystackEnd == cLastCharU || *lpHaystackEnd == cLastCharL)) {
+                continue;
+            }
+        }
 
-		if (fCaseSensitive) {
-			if (!_tcsncmp(lpHaystackEnd, lpNeedle, NeedleLength)) {
-				break;
-			}
-		} else {
-			//
-			// compare whole string using locale specific comparison.
-			// do not use C runtime version since it may be wrong.
-			//
+        if (fCaseSensitive) {
+            if (!_tcsncmp(lpHaystackEnd, lpNeedle, NeedleLength)) {
+                break;
+            }
+        } else {
+            //
+            // compare whole string using locale specific comparison.
+            // do not use C runtime version since it may be wrong.
+            //
 
-			if (CompareString(LOCALE_USER_DEFAULT,
-							  NORM_IGNORECASE | SORT_STRINGSORT | NORM_STOP_ON_NULL,
-							  lpHaystackEnd, NeedleLength,
-							  lpNeedle, NeedleLength) == 2) {
-				break;
-			}
-		}
-	} while (TRUE);
+            if (CompareString(LOCALE_USER_DEFAULT,
+                              NORM_IGNORECASE | SORT_STRINGSORT | NORM_STOP_ON_NULL,
+                              lpHaystackEnd, NeedleLength,
+                              lpNeedle, NeedleLength) == 2) {
+                break;
+            }
+        }
+    } while (TRUE);
 
-	if (fWholeWord) {
-		// Check that the preceding and following characters, if any,
-		// are word-break characters. If not, we will keep searching.
-		// We know that if we reach this point:
-		//   - the needle is inside the haystack
-		//   - the needle is preceded by at least one character
-		//   - the haystack is suffixed by a zero byte.
-		// Therefore it is safe to read one byte past the end of
-		// the needle.
+    if (fWholeWord) {
+        // Check that the preceding and following characters, if any,
+        // are word-break characters. If not, we will keep searching.
+        // We know that if we reach this point:
+        //   - the needle is inside the haystack
+        //   - the needle is preceded by at least one character
+        //   - the haystack is suffixed by a zero byte.
+        // Therefore it is safe to read one byte past the end of
+        // the needle.
 
-		if (lpHaystackEnd != lpHaystack && !IsBreakChar(lpHaystackEnd[-1])) {
-			// no preceding character, or preceding character is not word break
-			return NULL;
-		}
+        if (lpHaystackEnd != lpHaystack && !IsBreakChar(lpHaystackEnd[-1])) {
+            // no preceding character, or preceding character is not word break
+            return NULL;
+        }
 
-		if (lpHaystackEnd[NeedleLength] != '\0' && !IsBreakChar(lpHaystackEnd[NeedleLength])) {
-			// no following character, or following character is not word break
-			return NULL;
-		}
-	}
+        if (lpHaystackEnd[NeedleLength] != '\0' && !IsBreakChar(lpHaystackEnd[NeedleLength])) {
+            // no following character, or following character is not word break
+            return NULL;
+        }
+    }
 
-	return lpHaystackEnd;
+    return lpHaystackEnd;
 }
 
 // NotepadEx modification:
@@ -103,77 +103,77 @@ LPTSTR ReverseScan(
 // lpHaystackSearch = the beginning of the search
 LPTSTR ForwardScan(LPTSTR lpHaystackBegin, LPTSTR lpHaystackSearch, LPTSTR lpNeedle, BOOL fCaseSensitive)
 {
-	BOOL fAlreadyWrappedAround;
-	BOOL fFound;
-	LPTSTR lpHaystackSearchEnd;
-	TCHAR cFirstCharU;
-	TCHAR cFirstCharL;
-	ULONG NeedleLength = lstrlen(lpNeedle);
+    BOOL fAlreadyWrappedAround;
+    BOOL fFound;
+    LPTSTR lpHaystackSearchEnd;
+    TCHAR cFirstCharU;
+    TCHAR cFirstCharL;
+    ULONG NeedleLength = lstrlen(lpNeedle);
 
-	fFound = FALSE;
-	fAlreadyWrappedAround = FALSE;
-	lpHaystackSearchEnd = lpHaystackSearch;
-	cFirstCharU= (TCHAR) (INT_PTR) CharUpper( (LPTSTR)(INT_PTR)(*lpNeedle) );
-	cFirstCharL= (TCHAR) (INT_PTR) CharLower( (LPTSTR)(INT_PTR)(*lpNeedle) );
+    fFound = FALSE;
+    fAlreadyWrappedAround = FALSE;
+    lpHaystackSearchEnd = lpHaystackSearch;
+    cFirstCharU= (TCHAR) (INT_PTR) CharUpper( (LPTSTR)(INT_PTR)(*lpNeedle) );
+    cFirstCharL= (TCHAR) (INT_PTR) CharLower( (LPTSTR)(INT_PTR)(*lpNeedle) );
 
 SearchAgain:
-	while (*lpHaystackSearch && (!fAlreadyWrappedAround || lpHaystackSearch + 1 != lpHaystackSearchEnd)) {
-		if (fCaseSensitive) {
-			if (*lpHaystackSearch != *lpNeedle) {
-				lpHaystackSearch++;
-				continue;
-			}
-		} else {
-			if (!(*lpHaystackSearch == cFirstCharU || *lpHaystackSearch == cFirstCharL)) {
-				lpHaystackSearch++;
-				continue;
-			}
-		}
+    while (*lpHaystackSearch && (!fAlreadyWrappedAround || lpHaystackSearch + 1 != lpHaystackSearchEnd)) {
+        if (fCaseSensitive) {
+            if (*lpHaystackSearch != *lpNeedle) {
+                lpHaystackSearch++;
+                continue;
+            }
+        } else {
+            if (!(*lpHaystackSearch == cFirstCharU || *lpHaystackSearch == cFirstCharL)) {
+                lpHaystackSearch++;
+                continue;
+            }
+        }
 
-		if (fCaseSensitive) {
-			if (!_tcsncmp(lpHaystackSearch, lpNeedle, NeedleLength)) {
-				fFound = TRUE;
-			}
-		} else {
-			if (CompareString(	LOCALE_USER_DEFAULT,
-				NORM_IGNORECASE | SORT_STRINGSORT | NORM_STOP_ON_NULL,
-				lpHaystackSearch, NeedleLength,
-				lpNeedle, NeedleLength) == 2) {
-					fFound = TRUE;
-			}
-		}
+        if (fCaseSensitive) {
+            if (!_tcsncmp(lpHaystackSearch, lpNeedle, NeedleLength)) {
+                fFound = TRUE;
+            }
+        } else {
+            if (CompareString(    LOCALE_USER_DEFAULT,
+                NORM_IGNORECASE | SORT_STRINGSORT | NORM_STOP_ON_NULL,
+                lpHaystackSearch, NeedleLength,
+                lpNeedle, NeedleLength) == 2) {
+                    fFound = TRUE;
+            }
+        }
 
-		if (fFound && fWholeWord) {
-			BOOL fReallyFound;
-			// see the equivalent part of ReverseScan
+        if (fFound && fWholeWord) {
+            BOOL fReallyFound;
+            // see the equivalent part of ReverseScan
 
-			fReallyFound = FALSE;
+            fReallyFound = FALSE;
 
-			if ((lpHaystackSearch == lpHaystackBegin || IsBreakChar(lpHaystackSearch[-1])) &&
-			    (IsBreakChar(lpHaystackSearch[NeedleLength]) ||
-			     lpHaystackSearch[NeedleLength] == '\0')) {
-				fReallyFound = TRUE;
-			}
+            if ((lpHaystackSearch == lpHaystackBegin || IsBreakChar(lpHaystackSearch[-1])) &&
+                (IsBreakChar(lpHaystackSearch[NeedleLength]) ||
+                 lpHaystackSearch[NeedleLength] == '\0')) {
+                fReallyFound = TRUE;
+            }
 
-			if (fReallyFound) {
-				break;
-			}
+            if (fReallyFound) {
+                break;
+            }
 
-			fFound = FALSE;
-		} else if (fFound) {
-			break;
-		}
+            fFound = FALSE;
+        } else if (fFound) {
+            break;
+        }
 
-		lpHaystackSearch++;
-	}
+        lpHaystackSearch++;
+    }
 
-	if (fWrapAround && !fFound && !fAlreadyWrappedAround) {
-		fAlreadyWrappedAround = TRUE;
-		lpHaystackSearch = lpHaystackBegin;
-		goto SearchAgain;
-	}
+    if (fWrapAround && !fFound && !fAlreadyWrappedAround) {
+        fAlreadyWrappedAround = TRUE;
+        lpHaystackSearch = lpHaystackBegin;
+        goto SearchAgain;
+    }
 
-	return fFound ? lpHaystackSearch : NULL;
+    return fFound ? lpHaystackSearch : NULL;
 }
 
 // search forward or backward in the edit control text for the given pattern
@@ -188,7 +188,7 @@ BOOL Search (TCHAR * szKey)
     UINT      uSelState;
     HMENU     hMenu;
     BOOL      bSelectAll = FALSE;
-	BOOL	  fAlreadyWrappedAround = FALSE;
+    BOOL      fAlreadyWrappedAround = FALSE;
 
 
     if (!*szKey)
@@ -223,67 +223,67 @@ BOOL Search (TCHAR * szKey)
         return( bStatus );
     }
 
-	pStart = (PTCHAR) LocalLock( hEText );
+    pStart = (PTCHAR) LocalLock( hEText );
 
-	if( !pStart ) {
-		return( bStatus );
-	}
+    if( !pStart ) {
+        return( bStatus );
+    }
 
-	if (fReverse) {
-		// Get current line number 
-		LineNum = (DWORD)SendMessage(hwndEdit, EM_LINEFROMCHAR, SelStart, 0);
-		TotalLineCount = Edit_GetLineCount(hwndEdit);
+    if (fReverse) {
+        // Get current line number 
+        LineNum = (DWORD)SendMessage(hwndEdit, EM_LINEFROMCHAR, SelStart, 0);
+        TotalLineCount = Edit_GetLineCount(hwndEdit);
 
-		// Get index to start of the line
-		StartIndex = (DWORD)SendMessage(hwndEdit, EM_LINEINDEX, LineNum, 0);
-		OriginalStartIndex = StartIndex;
+        // Get index to start of the line
+        StartIndex = (DWORD)SendMessage(hwndEdit, EM_LINEINDEX, LineNum, 0);
+        OriginalStartIndex = StartIndex;
 
-		// Set upper limit for search text
-		EndIndex = SelStart;
-		OriginalEndIndex = EndIndex;
+        // Set upper limit for search text
+        EndIndex = SelStart;
+        OriginalEndIndex = EndIndex;
 
-		pMatch = NULL;
+        pMatch = NULL;
 
-		// Search line by line, from LineNum to 0
-		i = LineNum;
+        // Search line by line, from LineNum to 0
+        i = LineNum;
 
-		while (TRUE) {
-			pMatch = ReverseScan(pStart + StartIndex, pStart + EndIndex, szKey, fCase);
+        while (TRUE) {
+            pMatch = ReverseScan(pStart + StartIndex, pStart + EndIndex, szKey, fCase);
 
-			if (pMatch) {
-				break;
-			}
+            if (pMatch) {
+                break;
+            }
 
-			// current StartIndex is the upper limit for the next search 
-			EndIndex = StartIndex;
+            // current StartIndex is the upper limit for the next search 
+            EndIndex = StartIndex;
 
-			if ((!fAlreadyWrappedAround && i != 0) || (fAlreadyWrappedAround && i != LineNum)) {
-				// Get start of the next line
-				i--;
-				StartIndex = (DWORD)SendMessage(hwndEdit, EM_LINEINDEX, i, 0);
-			} else if (fWrapAround && !fAlreadyWrappedAround) {
-				// NotepadEx
-				fAlreadyWrappedAround = TRUE;
-				i = TotalLineCount - 1;											// wrap around to last line
-				StartIndex = Edit_LineIndex(hwndEdit, i);						// beginning of last line
+            if ((!fAlreadyWrappedAround && i != 0) || (fAlreadyWrappedAround && i != LineNum)) {
+                // Get start of the next line
+                i--;
+                StartIndex = (DWORD)SendMessage(hwndEdit, EM_LINEINDEX, i, 0);
+            } else if (fWrapAround && !fAlreadyWrappedAround) {
+                // NotepadEx
+                fAlreadyWrappedAround = TRUE;
+                i = TotalLineCount - 1;                                            // wrap around to last line
+                StartIndex = Edit_LineIndex(hwndEdit, i);                        // beginning of last line
 
-				if (StartIndex == -1) {
-					// I'm not sure if this can happen in the real world.
-					// -1 is returned when the line 'i' doesn't exist in the edit control.
-					// I suspect that this could happen in a race condition if the user
-					// modifies stuff while a search is occurring, so I'm going to put
-					// this check here.
-					break;
-				}
+                if (StartIndex == -1) {
+                    // I'm not sure if this can happen in the real world.
+                    // -1 is returned when the line 'i' doesn't exist in the edit control.
+                    // I suspect that this could happen in a race condition if the user
+                    // modifies stuff while a search is occurring, so I'm going to put
+                    // this check here.
+                    break;
+                }
 
-				EndIndex = StartIndex + Edit_LineLength(hwndEdit, StartIndex);	// end of last line
-			} else {
-				break;
-			}
-		}
-	} else {
-		pMatch = ForwardScan(pStart, pStart+SelEnd, szKey, fCase);
-	}
+                EndIndex = StartIndex + Edit_LineLength(hwndEdit, StartIndex);    // end of last line
+            } else {
+                break;
+            }
+        }
+    } else {
+        pMatch = ForwardScan(pStart, pStart+SelEnd, szKey, fCase);
+    }
 
     LocalUnlock(hEText);
 
@@ -346,11 +346,11 @@ BOOL NpReCreate( long style )
     HCURSOR hPrevCursor;
     BOOL    bModified;     // modify flag from old edit buffer
 
-	ULONG	SelectionStart;	// NotepadEx: save selection and cursor pos.
-	ULONG	SelectionEnd;	// when entering/leaving wordwrap
+    ULONG    SelectionStart;    // NotepadEx: save selection and cursor pos.
+    ULONG    SelectionEnd;    // when entering/leaving wordwrap
 
-	// NotepadEx: save old cursor position
-	SendMessage(hwndEdit, EM_GETSEL, (WPARAM) &SelectionStart, (LPARAM) &SelectionEnd);
+    // NotepadEx: save old cursor position
+    SendMessage(hwndEdit, EM_GETSEL, (WPARAM) &SelectionStart, (LPARAM) &SelectionEnd);
 
     // if wordwrap, remove soft carriage returns 
     hPrevCursor= SetCursor( hWaitCursor );     // this may take some time...
@@ -419,8 +419,8 @@ BOOL NpReCreate( long style )
     // Set font before set text to save time calculating
     SendMessage( hwndT1, WM_SETFONT, (WPARAM)hFont, MAKELPARAM(TRUE, 0) );
 
-	// NotepadEx: Restore tab size before setting text
-	Edit_SetTabStops(hwndT1, 1, &iTabStops);
+    // NotepadEx: Restore tab size before setting text
+    Edit_SetTabStops(hwndT1, 1, &iTabStops);
 
     if (!SendMessage (hwndT1, WM_SETTEXT, 0, (LPARAM) pchText))
     {
@@ -450,10 +450,10 @@ BOOL NpReCreate( long style )
     // limit text for safety's sake.
     PostMessage( hwndEdit, EM_LIMITTEXT, (WPARAM)CCHNPMAX, 0L );
 
-	// NotepadEx: restore old cursor pos. and scroll back to where we can see it
-	Edit_SetSel(hwndEdit, SelectionStart, SelectionEnd);
-	Edit_ScrollCaret(hwndEdit);
-	Edit_Scroll(hwndEdit, 5, 0);
+    // NotepadEx: restore old cursor pos. and scroll back to where we can see it
+    Edit_SetSel(hwndEdit, SelectionStart, SelectionEnd);
+    Edit_ScrollCaret(hwndEdit);
+    Edit_Scroll(hwndEdit, 5, 0);
 
     ShowWindow(hwndNP, SW_SHOW);
     SendMessage( hwndEdit, EM_SETMODIFY, bModified, 0L );
@@ -479,41 +479,41 @@ BOOL NpReCreate( long style )
 // Called when Ctrl+Shift+N is pressed or the File->New Window
 // menu item is clicked.
 VOID NewWindow(
-	VOID)
+    VOID)
 {
-	WCHAR PathToNotepad[MAX_PATH];
-	STARTUPINFO StartupInfo;
-	PROCESS_INFORMATION ProcessInformation;
-	ULONG Success;
-	
-	//
-	// Start a new notepad process with CreateProcess.
-	//
+    WCHAR PathToNotepad[MAX_PATH];
+    STARTUPINFO StartupInfo;
+    PROCESS_INFORMATION ProcessInformation;
+    ULONG Success;
+    
+    //
+    // Start a new notepad process with CreateProcess.
+    //
 
-	Success = GetModuleFileName(NULL, PathToNotepad, ARRAYSIZE(PathToNotepad));
+    Success = GetModuleFileName(NULL, PathToNotepad, ARRAYSIZE(PathToNotepad));
 
-	if (!Success) {
-		return;
-	}
+    if (!Success) {
+        return;
+    }
 
-	GetStartupInfo(&StartupInfo);
+    GetStartupInfo(&StartupInfo);
 
-	Success = CreateProcess(
-		PathToNotepad,
-		NULL,
-		NULL,
-		NULL,
-		FALSE,
-		0,
-		NULL,
-		NULL,
-		&StartupInfo,
-		&ProcessInformation);
+    Success = CreateProcess(
+        PathToNotepad,
+        NULL,
+        NULL,
+        NULL,
+        FALSE,
+        0,
+        NULL,
+        NULL,
+        &StartupInfo,
+        &ProcessInformation);
 
-	if (!Success) {
-		return;
-	}
+    if (!Success) {
+        return;
+    }
 
-	CloseHandle(ProcessInformation.hProcess);
-	CloseHandle(ProcessInformation.hThread);
+    CloseHandle(ProcessInformation.hProcess);
+    CloseHandle(ProcessInformation.hThread);
 }

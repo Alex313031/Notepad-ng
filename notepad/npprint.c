@@ -271,7 +271,7 @@ typedef HRESULT (WINAPI *PRINTDLGEXPROC)(IN OUT LPPRINTDLGEX lppd);
 
 HDC GetPrinterDCviaDialog( VOID )
 {
-	PRINTDLGEXPROC PrintDlgEx;
+    PRINTDLGEXPROC PrintDlgEx;
     PRINTDLGEX pdexTemp;
     HDC hDC;
     HRESULT hRes;
@@ -323,36 +323,36 @@ HDC GetPrinterDCviaDialog( VOID )
     // let user select printer
     //
 
-	PrintDlgEx = (PRINTDLGEXPROC) GetProcAddress(GetModuleHandle(L"comdlg32"), "PrintDlgExW");
-	
-	if (PrintDlgEx) {
-		hRes= PrintDlgEx( &pdexTemp );
-	} else {
-		// NotepadEx addition: For NT4 compatibility.
-		// NT4 does not have PrintDlgEx, only PrintDlg.
-		PRINTDLG pdTemp;
-		BOOL PrintDlgReturn;
+    PrintDlgEx = (PRINTDLGEXPROC) GetProcAddress(GetModuleHandle(L"comdlg32"), "PrintDlgExW");
+    
+    if (PrintDlgEx) {
+        hRes= PrintDlgEx( &pdexTemp );
+    } else {
+        // NotepadEx addition: For NT4 compatibility.
+        // NT4 does not have PrintDlgEx, only PrintDlg.
+        PRINTDLG pdTemp;
+        BOOL PrintDlgReturn;
 
-		RtlZeroMemory(&pdTemp, sizeof(pdTemp));
-		pdTemp.lStructSize		= sizeof(pdTemp);
-		pdTemp.hwndOwner		= pdexTemp.hwndOwner;
-		pdTemp.hDevMode			= pdexTemp.hDevMode;
-		pdTemp.hDevNames		= pdexTemp.hDevNames;
-		pdTemp.Flags			= pdexTemp.Flags & ~PD_NOCURRENTPAGE;
-		PrintDlgReturn = PrintDlg(&pdTemp);
+        RtlZeroMemory(&pdTemp, sizeof(pdTemp));
+        pdTemp.lStructSize        = sizeof(pdTemp);
+        pdTemp.hwndOwner        = pdexTemp.hwndOwner;
+        pdTemp.hDevMode            = pdexTemp.hDevMode;
+        pdTemp.hDevNames        = pdexTemp.hDevNames;
+        pdTemp.Flags            = pdexTemp.Flags & ~PD_NOCURRENTPAGE;
+        PrintDlgReturn = PrintDlg(&pdTemp);
 
-		if (!PrintDlgReturn) {
-			// Either canceled by user or some error occurred.
-			hRes = E_FAIL;
-		} else {
-			// Success. Copy values to pdexTemp
-			hRes = S_OK;
-			pdexTemp.dwResultAction	= PD_RESULT_PRINT;
-			pdexTemp.hDC			= pdTemp.hDC;
-			pdexTemp.hDevMode		= pdTemp.hDevMode;
-			pdexTemp.hDevNames		= pdTemp.hDevNames;
-		}
-	}
+        if (!PrintDlgReturn) {
+            // Either canceled by user or some error occurred.
+            hRes = E_FAIL;
+        } else {
+            // Success. Copy values to pdexTemp
+            hRes = S_OK;
+            pdexTemp.dwResultAction    = PD_RESULT_PRINT;
+            pdexTemp.hDC            = pdTemp.hDC;
+            pdexTemp.hDevMode        = pdTemp.hDevMode;
+            pdexTemp.hDevNames        = pdTemp.hDevNames;
+        }
+    }
 
     //
     // get DC if valid return
@@ -1014,7 +1014,7 @@ VOID TranslateString (TCHAR * src)
     /* Get the time we need in case we use &t. */
     //time (&long_time);
     //newtime = localtime (&long_time);
-	//long_time = *((PULONG) 0x7FFE0000 + 0x14) / 10000000 - 11644473600LL; // utc
+    //long_time = *((PULONG) 0x7FFE0000 + 0x14) / 10000000 - 11644473600LL; // utc
 
     while (*src)   /* look at all of source */
     {

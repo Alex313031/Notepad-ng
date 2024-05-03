@@ -101,21 +101,21 @@ INT IsTextUTF8( LPSTR lpstrInputStream, INT iLen )
 
 
 INT IsInputTextUnicode(
-	LPSTR	lpstrInputStream,
-	INT		iLen)
+    LPSTR    lpstrInputStream,
+    INT        iLen)
 {
-	INT iResult =	IS_TEXT_UNICODE_ASCII16 | IS_TEXT_UNICODE_REVERSE_ASCII16 |
-					IS_TEXT_UNICODE_CONTROLS | IS_TEXT_UNICODE_REVERSE_CONTROLS |
-					IS_TEXT_UNICODE_SIGNATURE | IS_TEXT_UNICODE_REVERSE_SIGNATURE |
-					IS_TEXT_UNICODE_ILLEGAL_CHARS |
-					IS_TEXT_UNICODE_ODD_LENGTH |
-					IS_TEXT_UNICODE_NULL_BYTES;
+    INT iResult =    IS_TEXT_UNICODE_ASCII16 | IS_TEXT_UNICODE_REVERSE_ASCII16 |
+                    IS_TEXT_UNICODE_CONTROLS | IS_TEXT_UNICODE_REVERSE_CONTROLS |
+                    IS_TEXT_UNICODE_SIGNATURE | IS_TEXT_UNICODE_REVERSE_SIGNATURE |
+                    IS_TEXT_UNICODE_ILLEGAL_CHARS |
+                    IS_TEXT_UNICODE_ODD_LENGTH |
+                    IS_TEXT_UNICODE_NULL_BYTES;
 
-	if (iLen < 2) {
-		// Text with 0 bytes has no character encoding so we can assume ANSI for further processing.
-		// Text with 1 byte is highly probable to be ANSI.
-		return FALSE;
-	}
+    if (iLen < 2) {
+        // Text with 0 bytes has no character encoding so we can assume ANSI for further processing.
+        // Text with 1 byte is highly probable to be ANSI.
+        return FALSE;
+    }
 
-	return IsTextUnicode(lpstrInputStream, iLen, &iResult);
+    return IsTextUnicode(lpstrInputStream, iLen, &iResult);
 }

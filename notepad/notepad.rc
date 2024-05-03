@@ -27,49 +27,49 @@
 //
 // 1, 2, 2, 0 -> add Ctrl+Backspace support, reduce edit control flicker on XP+,
 //               add dirty indicator in title bar, changed selection line/column display,
-//				 remove "Bush hid the facts" bug,
-//				 add Ctrl+Shift+S shortcut for Save As
+//                 remove "Bush hid the facts" bug,
+//                 add Ctrl+Shift+S shortcut for Save As
 //
 // 1, 3, 0, 0 -> fix a minor bug in Ctrl+Backspace support.
 //               eliminate flicker during Ctrl+Backspace operation.
 //               add support for "Find Previous" menu item (Shift+F3).
-//				 add support for "Whole word only" in find/replace.
-//				 add support for "Wrap around" in find/replace.
+//                 add support for "Whole word only" in find/replace.
+//                 add support for "Wrap around" in find/replace.
 //               allow word wrap together with status bar
 //
 // 1, 3, 0, 1 -> save and restore Find&Replace settings from the registry.
 //               improve algorithm used for word wrap + status bar
-//				 make goto dialog work with word wrap
+//                 make goto dialog work with word wrap
 //               fix bug with tab width setting + word wrap/status bar
 //               eliminate flicker during window resize (spurious InvalidateRect call)
-//				 reduce status bar flicker during window resize (WS_EX_COMPOSITED)
+//                 reduce status bar flicker during window resize (WS_EX_COMPOSITED)
 //               disable all find/replace and goto menu items when no text in the notepad
 //               implement Ctrl+Shift+N shortcut & menu item for new window
 //               make new notepad windows open cascaded
 //               
 // Note: PRODUCTVERSION == FILEVERSION
 1 VERSIONINFO
-	FILEVERSION 1, 3, 1, 0
-	PRODUCTVERSION 1, 3, 1, 0
-	FILEOS VOS_NT_WINDOWS32
-	FILETYPE VFT_APP
+    FILEVERSION 1, 3, 1, 0
+    PRODUCTVERSION 1, 3, 1, 0
+    FILEOS VOS_NT_WINDOWS32
+    FILETYPE VFT_APP
 BEGIN
-	BLOCK "StringFileInfo" {
-		BLOCK "040904B0" {
-			VALUE "Comments", "https://github.com/Alex313031/Notepad-ng"
-			VALUE "FileDescription", "Notepad Next Generation"
-			VALUE "FileVersion", "1.3.1.0"
-			VALUE "InternalName", "Notepad"
-			VALUE "LegalCopyright", "Copyright Alex313031 and vxiiduu"
-			VALUE "OriginalFilename", "NOTEPAD.EXE"
-			VALUE "ProductName", "Notepad-NG"
-			VALUE "ProductVersion", "1.3.1.0"
-		}
-	}
+    BLOCK "StringFileInfo" {
+        BLOCK "040904B0" {
+            VALUE "Comments", "https://github.com/Alex313031/Notepad-ng"
+            VALUE "FileDescription", "Notepad Next Generation"
+            VALUE "FileVersion", "1.3.1.0"
+            VALUE "InternalName", "Notepad"
+            VALUE "LegalCopyright", "Copyright Alex313031 and vxiiduu"
+            VALUE "OriginalFilename", "NOTEPAD.EXE"
+            VALUE "ProductName", "Notepad-NG"
+            VALUE "ProductVersion", "1.3.1.0"
+        }
+    }
 
-	BLOCK "VarFileInfo" {
-		VALUE "Translation", 0x0409 0x04B0
-	}
+    BLOCK "VarFileInfo" {
+        VALUE "Translation", 0x0409 0x04B0
+    }
 END
 
 ID_ICON    ICON PRELOAD DISCARDABLE     notepad.ico
@@ -78,16 +78,16 @@ ID_MENUBAR  MENU PRELOAD DISCARDABLE
 BEGIN
     POPUP   "&File"
         BEGIN
-            MENUITEM    "&New\tCtrl+N",							M_NEW
-			MENUITEM	"New &Window\tCtrl+Shift+N",			M_NEWWIN
-            MENUITEM    "&Open...\tCtrl+O",						M_OPEN
-            MENUITEM    "&Save\tCtrl+S",						M_SAVE
-            MENUITEM    "Save &As...\tCtrl+Shift+S",			M_SAVEAS
+            MENUITEM    "&New\tCtrl+N",                            M_NEW
+            MENUITEM    "New &Window\tCtrl+Shift+N",            M_NEWWIN
+            MENUITEM    "&Open...\tCtrl+O",                        M_OPEN
+            MENUITEM    "&Save\tCtrl+S",                        M_SAVE
+            MENUITEM    "Save &As...\tCtrl+Shift+S",            M_SAVEAS
             MENUITEM    SEPARATOR
-            MENUITEM    "Page Set&up...",						M_PAGESETUP
-            MENUITEM    "&Print...\tCtrl+P",					M_PRINT
+            MENUITEM    "Page Set&up...",                        M_PAGESETUP
+            MENUITEM    "&Print...\tCtrl+P",                    M_PRINT
             MENUITEM    SEPARATOR
-            MENUITEM    "E&xit",								M_EXIT
+            MENUITEM    "E&xit",                                M_EXIT
         END
 
     POPUP   "&Edit"
@@ -101,7 +101,7 @@ BEGIN
             MENUITEM    SEPARATOR
             MENUITEM    "&Find...\tCtrl+F",     M_FIND
             MENUITEM    "Find &Next\tF3",       M_FINDNEXT
-			MENUITEM	"Find Pre&vious\tShift+F3", M_FINDPREVIOUS
+            MENUITEM    "Find Pre&vious\tShift+F3", M_FINDPREVIOUS
             MENUITEM    "&Replace...\tCtrl+H",  M_REPLACE
 /*
             The hotkey used for replace is CTRL-H in most of the editors, and hence though 
@@ -119,12 +119,12 @@ BEGIN
             MENUITEM    "&Word Wrap"      M_WW
             MENUITEM    "&Font...",       M_SETFONT
 
-			POPUP		"&Tab Width"
-				BEGIN
-					MENUITEM	"&2"		M_TW2
-					MENUITEM	"&4"		M_TW4
-					MENUITEM	"&8"		M_TW8
-				END
+            POPUP        "&Tab Width"
+                BEGIN
+                    MENUITEM    "&2"        M_TW2
+                    MENUITEM    "&4"        M_TW4
+                    MENUITEM    "&8"        M_TW8
+                END
         END
 
     POPUP   "&View"
@@ -144,15 +144,15 @@ END
 MainAcc ACCELERATORS PRELOAD DISCARDABLE
 BEGIN
     "N",       M_NEW,      VIRTKEY, CONTROL
-	"N",	   M_NEWWIN,   VIRTKEY, CONTROL, SHIFT
+    "N",       M_NEWWIN,   VIRTKEY, CONTROL, SHIFT
     "O",       M_OPEN,     VIRTKEY, CONTROL
     "S",       M_SAVE,     VIRTKEY, CONTROL
-	"S",       M_SAVEAS,   VIRTKEY, CONTROL, SHIFT
+    "S",       M_SAVEAS,   VIRTKEY, CONTROL, SHIFT
     "P",       M_PRINT,    VIRTKEY, CONTROL
     VK_INSERT, M_COPY,     VIRTKEY, CONTROL
     VK_F1,     M_HELP,     VIRTKEY
     VK_F3,     M_FINDNEXT, VIRTKEY
-	VK_F3,	   M_FINDPREVIOUS, VIRTKEY, SHIFT
+    VK_F3,       M_FINDPREVIOUS, VIRTKEY, SHIFT
     VK_F5,     M_DATETIME, VIRTKEY
     "G",       M_GOTO,     VIRTKEY, CONTROL
     "F",       M_FIND    , VIRTKEY, CONTROL, NOINVERT
@@ -175,7 +175,7 @@ BEGIN
     VK_INSERT, M_COPY,     VIRTKEY, CONTROL
     VK_F1,     M_HELP,     VIRTKEY
     VK_F3,     M_FINDNEXT, VIRTKEY
-	VK_F3,	   M_FINDPREVIOUS, VIRTKEY, SHIFT
+    VK_F3,       M_FINDPREVIOUS, VIRTKEY, SHIFT
     VK_F5,     M_DATETIME, VIRTKEY
     "G",       M_GOTO,     VIRTKEY, CONTROL
     "F",       M_FIND,     VIRTKEY, CONTROL, NOINVERT
@@ -257,8 +257,8 @@ BEGIN
 
     IDS_LETTERS     "fFpPtTdDcCrRlL"
 
-	IDS_LT_WINDOWS   "   Windows (CRLF)  "
-	IDS_LT_UNIX		 "   Unix (LF)  "
+    IDS_LT_WINDOWS   "   Windows (CRLF)  "
+    IDS_LT_UNIX         "   Unix (LF)  "
 END
 
 /* Include other dialogs. */
