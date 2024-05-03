@@ -132,13 +132,12 @@ VOID SaveGlobals(VOID)
     RegWriteInt( hKey, TEXT("lfQuality"),        FontStruct.lfQuality);
     RegWriteInt( hKey, TEXT("lfPitchAndFamily"), FontStruct.lfPitchAndFamily);
     RegWriteInt( hKey, TEXT("iPointSize"),       iPointSize);
-    RegWriteInt( hKey, TEXT("iTabStops"),         iTabStops);
+    RegWriteInt( hKey, TEXT("iTabStops"),        iTabStops);
     RegWriteInt( hKey, TEXT("fWrap"),            fWrap);
     RegWriteInt( hKey, TEXT("StatusBar"),        fStatus);
-    RegWriteInt( hKey, TEXT("fWholeWord"),         fWholeWord);
-    RegWriteInt( hKey, TEXT("fCase"),             fCase);
-    RegWriteInt( hKey, TEXT("fWrapAround"),         fWrapAround);
-
+    RegWriteInt( hKey, TEXT("fWholeWord"),       fWholeWord);
+    RegWriteInt( hKey, TEXT("fCase"),            fCase);
+    RegWriteInt( hKey, TEXT("fWrapAround"),      fWrapAround);
     RegWriteInt( hKey, TEXT("fSaveWindowPositions"),fSaveWindowPositions );
 
     RegWriteString( hKey, TEXT("lfFaceName"), FontStruct.lfFaceName);
@@ -232,11 +231,11 @@ VOID GetGlobals( VOID )
     RegGetString( hKey, TEXT("lfFaceName"), TEXT("Lucida Console"), FontStruct.lfFaceName, LF_FACESIZE);
 
     iPointSize= RegGetInt( hKey, TEXT("iPointSize"), 100);
-    iTabStops=    RegGetInt( hKey, TEXT("iTabStops"),     32);
+    iTabStops=  RegGetInt( hKey, TEXT("iTabStops"),  32);
     fWrap=      RegGetInt( hKey, TEXT("fWrap"),      0);
     fStatus=    RegGetInt( hKey, TEXT("StatusBar"),  0);
-    fWholeWord=    RegGetInt( hKey, TEXT("fWholeWord"), 0);
-    fCase=        RegGetInt( hKey, TEXT("fCase"),         0);
+    fWholeWord= RegGetInt( hKey, TEXT("fWholeWord"), 0);
+    fCase=      RegGetInt( hKey, TEXT("fCase"),      0);
     fWrapAround=RegGetInt( hKey, TEXT("fWrapAround"),0);
     fSaveWindowPositions= RegGetInt( hKey, TEXT("fSaveWindowPositions"), 0 );
 
