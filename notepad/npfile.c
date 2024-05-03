@@ -108,33 +108,33 @@ BOOL AnsiWriteFile(HANDLE  hFile,    // file to write to
        return (FALSE);
     }
 
-	bStatus= 
-	WideCharToMultiByte(uCodePage,             // code page
-						dwFlags,               // performance and mapping flags
-						(LPWSTR) lpBuffer,      // wide char buffer
-						nChars,                // chars in wide char buffer
-						lpAnsi,                // resultant ascii string
-						nBytes,                // size of ascii string buffer
-						NULL,                  // char to sub. for unmapped chars (use default)
-						pfDefCharUsed);        // flag to set if default char used
+    bStatus= 
+    WideCharToMultiByte(uCodePage,             // code page
+                        dwFlags,               // performance and mapping flags
+                        (LPWSTR) lpBuffer,      // wide char buffer
+                        nChars,                // chars in wide char buffer
+                        lpAnsi,                // resultant ascii string
+                        nBytes,                // size of ascii string buffer
+                        NULL,                  // char to sub. for unmapped chars (use default)
+                        pfDefCharUsed);        // flag to set if default char used
 
-	// strip out all Carriage Returns in lpAnsi in-place (WOW FANCY)
-	if (bStatus && g_ltOpenedAs == LT_UNIX) {
-		UINT i;
-		LPSTR lpAnsiOriginal = lpAnsi;
-		UINT nBytesOriginal = nBytes;
+    // strip out all Carriage Returns in lpAnsi in-place (WOW FANCY)
+    if (bStatus && g_ltOpenedAs == LT_UNIX) {
+        UINT i;
+        LPSTR lpAnsiOriginal = lpAnsi;
+        UINT nBytesOriginal = nBytes;
 
-		for (i = 0; i < nBytesOriginal; ++i) {
-			if (lpAnsiOriginal[i] == '\r') {
-				--nBytes; // don't write garbage after the end...
-				continue; // skip processing CR
-			}
+        for (i = 0; i < nBytesOriginal; ++i) {
+            if (lpAnsiOriginal[i] == '\r') {
+                --nBytes; // don't write garbage after the end...
+                continue; // skip processing CR
+            }
 
-			*lpAnsi++ = lpAnsiOriginal[i];
-		}
+            *lpAnsi++ = lpAnsiOriginal[i];
+        }
 
-		lpAnsi = lpAnsiOriginal;
-	}
+        lpAnsi = lpAnsiOriginal;
+    }
 
     if (bStatus) {
         bStatus= WriteFile( hFile, lpAnsi, nBytes, &nBytesWritten, NULL );
@@ -229,28 +229,28 @@ BOOL FAR SaveFile (HWND hwndParent, TCHAR *szFileSave, BOOL fSaveAs )
     // set the fNew flag if it had to be created.
     // We do all this in case of failures later in the process.
 
-	// NotepadEx change: This used to have two branches, identical except that
-	// when fSaveAs is TRUE then FILE_SHARE_WRITE would be added.
-	// Can't see any reason why that would be like that so it is changed.
-	// Btw, all versions up to Win10 have this feature in the code...
-	fp= CreateFile( szFileSave,		// name of file
-					GENERIC_READ|GENERIC_WRITE, // access mode
-					FILE_SHARE_READ,			// share mode
-					NULL,						// security descriptor
-					OPEN_ALWAYS,				// how to create
-					FILE_ATTRIBUTE_NORMAL,		// file attributes
-					NULL);						// hnd of file with attrs
+    // NotepadEx change: This used to have two branches, identical except that
+    // when fSaveAs is TRUE then FILE_SHARE_WRITE would be added.
+    // Can't see any reason why that would be like that so it is changed.
+    // Btw, all versions up to Win10 have this feature in the code...
+    fp= CreateFile( szFileSave,        // name of file
+                    GENERIC_READ|GENERIC_WRITE, // access mode
+                    FILE_SHARE_READ,            // share mode
+                    NULL,                        // security descriptor
+                    OPEN_ALWAYS,                // how to create
+                    FILE_ATTRIBUTE_NORMAL,        // file attributes
+                    NULL);                        // hnd of file with attrs
 
-	if( fp != INVALID_HANDLE_VALUE )
-	{
-		fNew= (GetLastError() != ERROR_ALREADY_EXISTS );
-	}
+    if( fp != INVALID_HANDLE_VALUE )
+    {
+        fNew= (GetLastError() != ERROR_ALREADY_EXISTS );
+    }
 
 
     if( fp == INVALID_HANDLE_VALUE )
     {
-		// NotepadEx: Proper Win7 notepad behavior is to simply fall-through to the
-		// Save As code in case file save fails (e.g. no permission to write)
+        // NotepadEx: Proper Win7 notepad behavior is to simply fall-through to the
+        // Save As code in case file save fails (e.g. no permission to write)
 //        AlertBox( hwndParent, szNN, szCREATEERR, szFileSave,
 //                        MB_APPLMODAL | MB_OK | MB_ICONEXCLAMATION);
         return FALSE;
@@ -428,7 +428,7 @@ BOOL FAR LoadFile (TCHAR * sz, INT typeFlag )
     TCHAR     szNullFile[2];    // fake null mapped file
     INT       cpTemp = CP_ACP;
     NP_FILETYPE ftOpenedAs = FT_UNKNOWN;
-	NP_LINETYPE ltOpenedAs = LT_WINDOWS;
+    NP_LINETYPE ltOpenedAs = LT_WINDOWS;
 
     if( fp == INVALID_HANDLE_VALUE ) {
        AlertUser_FileFail( sz );
@@ -699,34 +699,34 @@ BOOL FAR LoadFile (TCHAR * sz, INT typeFlag )
                                       0);
     }
 
-	// figure out if the file uses Unix or Windows style line endings
-	// by counting the number of \r and the number of \n
-	// Note: this code doesn't consider Macintosh-style line endings. It would be easy
-	// to do though, just:
-	// } else if (nLF == 0 && nCR > 0) {
-	//     ltOpenedAs = LT_MAC;
-	// } ...
-	if (fWindowsOnlyEOL) {
-		// Assume CR-LF line endings if specified in the registry.
-		ltOpenedAs = LT_WINDOWS;
-	} else if (ftOpenedAs == FT_ANSI || ftOpenedAs == FT_UTF8) {
-		ULONG nCR = 0;
-		ULONG nLF = 0;
+    // figure out if the file uses Unix or Windows style line endings
+    // by counting the number of \r and the number of \n
+    // Note: this code doesn't consider Macintosh-style line endings. It would be easy
+    // to do though, just:
+    // } else if (nLF == 0 && nCR > 0) {
+    //     ltOpenedAs = LT_MAC;
+    // } ...
+    if (fWindowsOnlyEOL) {
+        // Assume CR-LF line endings if specified in the registry.
+        ltOpenedAs = LT_WINDOWS;
+    } else if (ftOpenedAs == FT_ANSI || ftOpenedAs == FT_UTF8) {
+        ULONG nCR = 0;
+        ULONG nLF = 0;
 
-		for (i = 0; i < len; ++i) {
-			switch (lpBufAfterBOM[i]) {
-			case '\r': ++nCR; break;
-			case '\n': ++nLF; break;
-			}
-		}
+        for (i = 0; i < len; ++i) {
+            switch (lpBufAfterBOM[i]) {
+            case '\r': ++nCR; break;
+            case '\n': ++nLF; break;
+            }
+        }
 
-		if (nCR == 0 && nLF > 0) {
-			ltOpenedAs	= LT_UNIX;
-			nChars += (nLF >= nCR) ? (nLF - nCR) : 0;
-		} else {
-			ltOpenedAs	= LT_WINDOWS;
-		}
-	}
+        if (nCR == 0 && nLF > 0) {
+            ltOpenedAs    = LT_UNIX;
+            nChars += (nLF >= nCR) ? (nLF - nCR) : 0;
+        } else {
+            ltOpenedAs    = LT_WINDOWS;
+        }
+    }
 
     // Don't display text until all done.
     SendMessage (hwndEdit, WM_SETREDRAW, (WPARAM)FALSE, (LPARAM)0);
@@ -773,56 +773,56 @@ BOOL FAR LoadFile (TCHAR * sz, INT typeFlag )
           CopyMemory (lpch, lpBuf, ByteCountOf(nChars));
        }
     } else {
-		if (ltOpenedAs == LT_UNIX) {
-			LPTSTR lpchOriginal = lpch; // save the pointer
+        if (ltOpenedAs == LT_UNIX) {
+            LPTSTR lpchOriginal = lpch; // save the pointer
 
-			// perform on the fly conversion to CRLF
-			for (i = 0; i < len; ++i) {
-				// handle non-ASCII characters
-				if (!isascii(lpBufAfterBOM[i])) {
-					// find how many non-ASCII characters there are (which probably corresponds to
-					// one or more UTF-8 characters)
-					UINT nNonAsciiBytes = 0;
-					UINT nNonAsciiChars = 0;
-					while (!isascii(lpBufAfterBOM[i+(nNonAsciiBytes++)]));
-					nNonAsciiChars = MultiByteToWideChar(cpTemp,
-														 0,
-														 (LPSTR)lpBufAfterBOM+i,
-														 nNonAsciiBytes,
-														 (LPWSTR)lpch,
-														 nChars);
-					lpch += nNonAsciiChars;
-					i += nNonAsciiBytes - 1;
-					continue;
-				}
+            // perform on the fly conversion to CRLF
+            for (i = 0; i < len; ++i) {
+                // handle non-ASCII characters
+                if (!isascii(lpBufAfterBOM[i])) {
+                    // find how many non-ASCII characters there are (which probably corresponds to
+                    // one or more UTF-8 characters)
+                    UINT nNonAsciiBytes = 0;
+                    UINT nNonAsciiChars = 0;
+                    while (!isascii(lpBufAfterBOM[i+(nNonAsciiBytes++)]));
+                    nNonAsciiChars = MultiByteToWideChar(cpTemp,
+                                                         0,
+                                                         (LPSTR)lpBufAfterBOM+i,
+                                                         nNonAsciiBytes,
+                                                         (LPWSTR)lpch,
+                                                         nChars);
+                    lpch += nNonAsciiChars;
+                    i += nNonAsciiBytes - 1;
+                    continue;
+                }
 
-				switch (lpBufAfterBOM[i]) {
-				case '\r':
-					break;
-				case '\n':
-					*lpch++ = (TCHAR) '\r';
-					*lpch++ = (TCHAR) '\n';
-					break;
-				default:
-					*lpch++ = (TCHAR) lpBufAfterBOM[i];
-					break;
-				}
-			}
+                switch (lpBufAfterBOM[i]) {
+                case '\r':
+                    break;
+                case '\n':
+                    *lpch++ = (TCHAR) '\r';
+                    *lpch++ = (TCHAR) '\n';
+                    break;
+                default:
+                    *lpch++ = (TCHAR) lpBufAfterBOM[i];
+                    break;
+                }
+            }
 
-			//*lpch++ = (TCHAR) '\0';
-			lpch = lpchOriginal;
-		} else {
-			nChars = MultiByteToWideChar(cpTemp,
-										 0,
-										 (LPSTR)lpBufAfterBOM,
-										 len,
-										 (LPWSTR)lpch,
-										 nChars);
-		}
+            //*lpch++ = (TCHAR) '\0';
+            lpch = lpchOriginal;
+        } else {
+            nChars = MultiByteToWideChar(cpTemp,
+                                         0,
+                                         (LPSTR)lpBufAfterBOM,
+                                         len,
+                                         (LPWSTR)lpch,
+                                         nChars);
+        }
     }
 
     g_ftOpenedAs = ftOpenedAs;   // got everything; update global safe now
-	g_ltOpenedAs = ltOpenedAs;
+    g_ltOpenedAs = ltOpenedAs;
 
     //} 
     //__except(EXCEPTION_EXECUTE_HANDLER)
