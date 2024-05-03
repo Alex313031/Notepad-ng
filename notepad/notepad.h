@@ -191,7 +191,7 @@ typedef enum _NP_LINETYPE {
 #define IDS_LT_WINDOWS       46
 #define IDS_LT_UNIX          47
 
-#define CSTRINGS             48    /* cnt of stringtable strings from .rc file */
+#define CSTRINGS             47    /* cnt of stringtable strings from .rc file */
 
 // This string is used by MUI for the "FriendlyTypeName".
 // See reference to it in hivecls.inx
