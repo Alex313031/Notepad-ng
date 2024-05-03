@@ -9,14 +9,14 @@
 #define CONST const
 
 #ifndef RC_INVOKED
-#  include <ole2.h>
-#  include <commdlg.h>
-#  include <commctrl.h>
-   // we need this for CharSizeOf(), ByteCountOf(),
-#  include "uniconv.h"
+#include <ole2.h>
+#include <commdlg.h>
+#include <commctrl.h>
+// we need this for CharSizeOf(), ByteCountOf(),
+#include "uniconv.h"
 
-#  define STRSAFE_NO_DEPRECATE
-#  include <strsafe.h>
+#define STRSAFE_NO_DEPRECATE
+#include <strsafe.h>
 #endif // ifndef RC_INVOKED
 
 /* handy debug macro */
@@ -31,8 +31,8 @@ typedef enum _NP_FILETYPE {
 } NP_FILETYPE;
 
 typedef enum _NP_LINETYPE {
-	LT_WINDOWS = 0,
-	LT_UNIX = 1,
+    LT_WINDOWS = 0,
+    LT_UNIX = 1,
 } NP_LINETYPE;
 
 #define BOM_UTF8_HALF        0xBBEF
@@ -61,8 +61,8 @@ typedef enum _NP_LINETYPE {
 #define IDD_PAGESETUP        12
 #define IDD_SAVEDIALOG       13    // template for save dialog
 #define IDD_GOTODIALOG       14    // goto line number dialog
-#define IDD_FINDDIALOG		 15
-#define IDD_REPLACEDIALOG	 16
+#define IDD_FINDDIALOG       15
+#define IDD_REPLACEDIALOG    16
 
 // Control IDs 
 
@@ -74,7 +74,7 @@ typedef enum _NP_LINETYPE {
 
 // File
 #define M_NEW                1
-#define M_NEWWIN			 2
+#define M_NEWWIN             2
 #define M_OPEN               3
 #define M_SAVE               4
 #define M_SAVEAS             5
@@ -90,7 +90,7 @@ typedef enum _NP_LINETYPE {
 #define M_CLEAR              WM_CLEAR
 #define M_FIND               21
 #define M_FINDNEXT           22
-#define M_FINDPREVIOUS		 23
+#define M_FINDPREVIOUS       23
 #define M_REPLACE            24
 #define M_GOTO               25
 #define M_SELECTALL          26
@@ -100,9 +100,9 @@ typedef enum _NP_LINETYPE {
 // Format
 #define M_WW                 32
 #define M_SETFONT            33
-#define M_TW2				 34
-#define M_TW4				 35
-#define M_TW8				 36
+#define M_TW2                34
+#define M_TW4                35
+#define M_TW8                36
 
 // Help
 #define M_HELP               64
@@ -188,10 +188,10 @@ typedef enum _NP_LINETYPE {
 
 #define IDS_LETTERS          45    /* formatting letters used in page setup */
 
-#define IDS_LT_WINDOWS		 46
-#define IDS_LT_UNIX			 47
+#define IDS_LT_WINDOWS       46
+#define IDS_LT_UNIX          47
 
-#define CSTRINGS             47    /* cnt of stringtable strings from .rc file */
+#define CSTRINGS             48    /* cnt of stringtable strings from .rc file */
 
 // This string is used by MUI for the "FriendlyTypeName".
 // See reference to it in hivecls.inx
@@ -250,9 +250,9 @@ extern TCHAR    szFileName[];
 extern HANDLE   fp;
 
 extern BOOL     fMLE_is_broken;
-extern BOOL		fWindowsOnlyEOL;
+extern BOOL     fWindowsOnlyEOL;
 
-extern WNDPROC	DefEditWindowProc;
+extern WNDPROC    DefEditWindowProc;
 
 //
 // Holds header and footer strings to be used in printing.
@@ -324,7 +324,7 @@ extern HMENU hSysMenuSetup;     /* Save Away for disabled Minimize   */
 extern BOOL  fStatus;
 extern INT   dyStatus;
 
-extern INT	 iTabStops;
+extern INT   iTabStops;
 
 
 /* Macro for setting status bar - x is the text to set and n is the part number
@@ -352,6 +352,7 @@ LRESULT CALLBACK EditWndProc (HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
 void FAR SetTitle (TCHAR *sz);
 INT FAR  AlertBox (HWND hwndParent, TCHAR *szCaption, TCHAR *szText1,
                    TCHAR *szText2, UINT style);
+void FAR NpWinIniChange (VOID);
 void FAR FreeGlobalPD (void);
 INT_PTR CALLBACK GotoDlgProc(HWND hDlg,UINT message,WPARAM wParam,LPARAM lParam);
 VOID CALLBACK WinEventFunc(HWINEVENTHOOK hWinEventHook, DWORD event, HWND hwnd, LONG idObject,
@@ -378,6 +379,7 @@ VOID FAR  AlertUser_FileFail( LPTSTR szFileName );
 /* procs in npinit.c */
 INT FAR  NPInit (HANDLE hInstance, HANDLE hPrevInstance,
                  LPTSTR lpCmdLine, INT cmdShow);
+void FAR InitLocale (VOID);
 void SaveGlobals( VOID );
 VOID RegWriteInt( HKEY hKey, PTCHAR pszKey, INT iValue );
 
@@ -386,7 +388,7 @@ INT FAR  FindDlgProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 BOOL     Search (TCHAR *szSearch);
 INT FAR  AboutDlgProc (HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 BOOL FAR NpReCreate (LONG style);
-LPTSTR ForwardScan(LPTSTR lpHaystackBegin, LPTSTR lpHaystackSearch, LPTSTR lpNeedle, BOOL fCaseSensitive);
+LPTSTR   ForwardScan(LPTSTR lpHaystackBegin, LPTSTR lpHaystackSearch, LPTSTR lpNeedle, BOOL fCaseSensitive);
 
 
 /* procs in npprint.c */
